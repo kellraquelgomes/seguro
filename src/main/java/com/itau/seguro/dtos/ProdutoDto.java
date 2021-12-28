@@ -1,0 +1,30 @@
+package com.itau.seguro.dtos;
+
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+
+@Data
+public class ProdutoDto {
+
+    private Integer produtoId;
+
+    @NotBlank
+    @NotNull
+    private String nome;
+
+    @NotBlank
+    @NotNull
+    private BigDecimal valor;
+
+
+    private Integer quantidadeAcionamento;
+
+    @NotBlank
+    @NotNull
+    private ParceiroDto parceiro;
+
+
+}

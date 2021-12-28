@@ -7,8 +7,8 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Data
 @Entity
@@ -19,7 +19,7 @@ public class Cliente implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID clienteId;
+    private Integer clienteId;
 
     @Column(nullable = false, length = 150)
     private String nome;
@@ -33,13 +33,13 @@ public class Cliente implements Serializable {
     @JoinTable(    name = "TB_CLIENTES_PRODUTOS",
             joinColumns = @JoinColumn(name = "clienteId"),
             inverseJoinColumns = @JoinColumn(name = "produtoId"))
-    private Set<Produto> produtos;
+    private Set<Produto> produtos = new HashSet<>();
 
     //UmClienteParaMuitosAcionamentos
     @JsonProperty(access = JsonProperty.Access. WRITE_ONLY)
     @OneToMany(mappedBy = "cliente" , fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
-    private Set<ClienteAcionamentoProduto> acionamentos;
+    private Set<ClienteAcionamentoProduto> acionamentos = new HashSet<>();
 
 
 }
