@@ -1,6 +1,6 @@
 package com.itau.seguro.serviceImpl;
 
-import com.itau.seguro.dtos.ClienteDto;
+import com.itau.seguro.dtos.ClienteProdutoDto;
 import com.itau.seguro.dtos.ParceiroDto;
 import com.itau.seguro.dtos.ProdutoDto;
 import com.itau.seguro.enums.ParceiroEnum;
@@ -36,10 +36,10 @@ public class ClienteServiceImplTest {
         final ClienteRepository repository= context.mock(ClienteRepository.class);
         final ProdutoRepository repositoryProduto= context.mock(ProdutoRepository.class);
         // parametros de entrada
-        final ClienteDto clienteDto = new ClienteDto();
-        clienteDto.setClienteId(new Integer(1));
-        clienteDto.setNome("Pedro Alves");
-        clienteDto.setDocumento("28570368097");
+        final ClienteProdutoDto clienteProdutoDto = new ClienteProdutoDto();
+        clienteProdutoDto.setClienteId(new Integer(1));
+        clienteProdutoDto.setNome("Pedro Alves");
+        clienteProdutoDto.setDocumento("28570368097");
 
         ProdutoDto produtoSeguroVidaDto = new ProdutoDto();
         produtoSeguroVidaDto.setProdutoId(new Integer(1));
@@ -60,7 +60,7 @@ public class ClienteServiceImplTest {
         List< ProdutoDto > produtosDto = new ArrayList<ProdutoDto>();
         produtosDto.add(produtoSeguroVidaDto);
         produtosDto.add(produtoSeguroAltoDto);
-        clienteDto.setProdutos(produtosDto);
+        clienteProdutoDto.setProdutos(produtosDto);
 
         // verificaCLienteProdutoExiste
         final  Optional< Cliente> clienteNãoExiste = Optional.ofNullable(null);
@@ -101,20 +101,20 @@ public class ClienteServiceImplTest {
 
         context.checking(new Expectations() {
             {
-                oneOf(repository).findByDocumento(with(clienteDto.getDocumento()));
+                oneOf(repository).findByDocumento(with(clienteProdutoDto.getDocumento()));
                 will(returnValue(clienteNãoExiste));
                 oneOf(repository).save(with(cliente));
                 will(returnValue(cliente));
-                oneOf(repositoryProduto).findById(with(clienteDto.getProdutos().get(0).getProdutoId()));
+                oneOf(repositoryProduto).findById(with(clienteProdutoDto.getProdutos().get(0).getProdutoId()));
                 will(returnValue(produtoSeguroVida));
-                oneOf(repositoryProduto).findById(with(clienteDto.getProdutos().get(1).getProdutoId()));
+                oneOf(repositoryProduto).findById(with(clienteProdutoDto.getProdutos().get(1).getProdutoId()));
                 will(returnValue(produtoSeguroAlto));
             }
         });
         service.setClienteRepository(repository);
         service.setProdutoRepository(repositoryProduto);
-        final ClienteDto clienteDtoRetorno = service.saveClienteProduto(clienteDto);
-        assertNotNull(clienteDtoRetorno);
+        final ClienteProdutoDto clienteProdutoDtoRetorno = service.saveClienteProduto(clienteProdutoDto);
+        assertNotNull(clienteProdutoDtoRetorno);
         context.assertIsSatisfied();
     }
 
@@ -124,10 +124,10 @@ public class ClienteServiceImplTest {
         final ClienteRepository repository= context.mock(ClienteRepository.class);
         final ProdutoRepository repositoryProduto= context.mock(ProdutoRepository.class);
         // parametros de entrada
-        final ClienteDto clienteDto = new ClienteDto();
-        clienteDto.setClienteId(new Integer(1));
-        clienteDto.setNome("Pedro Alves");
-        clienteDto.setDocumento("28570368097");
+        final ClienteProdutoDto clienteProdutoDto = new ClienteProdutoDto();
+        clienteProdutoDto.setClienteId(new Integer(1));
+        clienteProdutoDto.setNome("Pedro Alves");
+        clienteProdutoDto.setDocumento("28570368097");
 
         ProdutoDto produtoSeguroVidaDto = new ProdutoDto();
         produtoSeguroVidaDto.setProdutoId(new Integer(1));
@@ -148,7 +148,7 @@ public class ClienteServiceImplTest {
         List< ProdutoDto > produtosDto = new ArrayList<ProdutoDto>();
         produtosDto.add(produtoSeguroVidaDto);
         produtosDto.add(produtoSeguroAltoDto);
-        clienteDto.setProdutos(produtosDto);
+        clienteProdutoDto.setProdutos(produtosDto);
 
         // verificaCLienteExiste
         final  Optional< Cliente> clienteExiste = Optional.ofNullable(new Cliente());
@@ -180,9 +180,9 @@ public class ClienteServiceImplTest {
 
         context.checking(new Expectations() {
             {
-                oneOf(repository).findByDocumento(with(clienteDto.getDocumento()));
+                oneOf(repository).findByDocumento(with(clienteProdutoDto.getDocumento()));
                 will(returnValue(clienteExiste));
-                oneOf(repository).findByClienteIdAndProdutos_ProdutoId(with(clienteExiste.get().getClienteId()),with(clienteDto.getProdutos().get(0).getProdutoId()));
+                oneOf(repository).findByClienteIdAndProdutos_ProdutoId(with(clienteExiste.get().getClienteId()),with(clienteProdutoDto.getProdutos().get(0).getProdutoId()));
                 will(returnValue(listaProduto));
                 never(repository).save(with(any(Cliente.class)));
                 will(returnValue(null));
@@ -194,7 +194,7 @@ public class ClienteServiceImplTest {
         service.setProdutoRepository(repositoryProduto);
 
         try {
-            service.saveClienteProduto(clienteDto);
+            service.saveClienteProduto(clienteProdutoDto);
         } catch (BusinessException b) {
             context.assertIsSatisfied();
             assertEquals("Cliente ja cadastrado com o produto: Seguro Vida do Parceiro: com Você", b.getMessage());
@@ -210,10 +210,10 @@ public class ClienteServiceImplTest {
         final ClienteRepository repository= context.mock(ClienteRepository.class);
         final ProdutoRepository repositoryProduto= context.mock(ProdutoRepository.class);
         // parametros de entrada
-        final ClienteDto clienteDto = new ClienteDto();
-        clienteDto.setClienteId(new Integer(1));
-        clienteDto.setNome("Pedro Alves");
-        clienteDto.setDocumento("28570368097");
+        final ClienteProdutoDto clienteProdutoDto = new ClienteProdutoDto();
+        clienteProdutoDto.setClienteId(new Integer(1));
+        clienteProdutoDto.setNome("Pedro Alves");
+        clienteProdutoDto.setDocumento("28570368097");
 
         ProdutoDto produtoSeguroVidaDto = new ProdutoDto();
         produtoSeguroVidaDto.setProdutoId(new Integer(21));
@@ -234,7 +234,7 @@ public class ClienteServiceImplTest {
         List< ProdutoDto > produtosDto = new ArrayList<ProdutoDto>();
         produtosDto.add(produtoSeguroVidaDto);
         produtosDto.add(produtoSeguroAltoDto);
-        clienteDto.setProdutos(produtosDto);
+        clienteProdutoDto.setProdutos(produtosDto);
 
         // verificaCLienteProdutoExiste
         final  Optional< Cliente> clienteNãoExiste = Optional.ofNullable(null);
@@ -256,11 +256,11 @@ public class ClienteServiceImplTest {
 
         context.checking(new Expectations() {
             {
-                oneOf(repository).findByDocumento(with(clienteDto.getDocumento()));
+                oneOf(repository).findByDocumento(with(clienteProdutoDto.getDocumento()));
                 will(returnValue(clienteNãoExiste));
                 oneOf(repository).save(with(cliente));
                 will(returnValue(cliente));
-                oneOf(repositoryProduto).findById(with(clienteDto.getProdutos().get(0).getProdutoId()));
+                oneOf(repositoryProduto).findById(with(clienteProdutoDto.getProdutos().get(0).getProdutoId()));
                 will(returnValue(produtoSeguroVida));
 
             }
@@ -269,7 +269,7 @@ public class ClienteServiceImplTest {
         service.setProdutoRepository(repositoryProduto);
 
         try {
-            service.saveClienteProduto(clienteDto);
+            service.saveClienteProduto(clienteProdutoDto);
         } catch (EntityNotFoundException b) {
             context.assertIsSatisfied();
             assertEquals("Produto Seguro Vida do Parceiro com Você não está cadastrado.", b.getMessage());

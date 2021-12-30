@@ -4,9 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -20,9 +21,9 @@ public class ClienteAcionamentoProduto {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss'Z'")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     @Column(nullable = false)
-    private LocalDateTime dataAcionamento;
+    private DateTime dataAcionamento;
 
     //MuitosAcionamentosParaUmProduto
     @JsonProperty(access = JsonProperty.Access. WRITE_ONLY)

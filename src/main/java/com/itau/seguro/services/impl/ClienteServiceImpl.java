@@ -1,6 +1,6 @@
 package com.itau.seguro.services.impl;
 
-import com.itau.seguro.dtos.ClienteDto;
+import com.itau.seguro.dtos.ClienteProdutoDto;
 import com.itau.seguro.dtos.ProdutoDto;
 import com.itau.seguro.exceptions.BusinessException;
 import com.itau.seguro.exceptions.EntityNotFoundException;
@@ -30,14 +30,14 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Transactional
     @Override
-    public ClienteDto saveClienteProduto(ClienteDto clienteDto) {
+    public ClienteProdutoDto saveClienteProduto(ClienteProdutoDto clienteProdutoDto) {
 
         Cliente cliente = new Cliente();
-        verificaClienteProdutoExiste(clienteDto);
-        BeanUtils.copyProperties(clienteDto,cliente);
+        verificarClienteProdutoExiste(clienteProdutoDto);
+        BeanUtils.copyProperties(clienteProdutoDto,cliente);
         cliente = clienteRepository.save(cliente);
 
-        for (ProdutoDto produtoDto: clienteDto.getProdutos()) {
+        for (ProdutoDto produtoDto: clienteProdutoDto.getProdutos()) {
             Optional<Produto> produto = produtoRepository.findById(produtoDto.getProdutoId());
             if(produto.isPresent()){
                 cliente.getProdutos().add(produto.get());
@@ -49,16 +49,17 @@ public class ClienteServiceImpl implements ClienteService {
             }
 
         }
-        BeanUtils.copyProperties(cliente, clienteDto);
-        return clienteDto;
+        BeanUtils.copyProperties(cliente, clienteProdutoDto);
+        return clienteProdutoDto;
     }
 
-    private void verificaClienteProdutoExiste(ClienteDto clienteDto) {
 
-        Optional<Cliente> cliente = clienteRepository.findByDocumento(clienteDto.getDocumento());
+    private void verificarClienteProdutoExiste(ClienteProdutoDto clienteProdutoDto) {
+
+        Optional<Cliente> cliente = clienteRepository.findByDocumento(clienteProdutoDto.getDocumento());
 
         if(cliente.isPresent()){
-            for (ProdutoDto produto: clienteDto.getProdutos()) {
+            for (ProdutoDto produto: clienteProdutoDto.getProdutos()) {
               List< Produto > produtos =  clienteRepository.findByClienteIdAndProdutos_ProdutoId(cliente.get().getClienteId(), produto.getProdutoId());
 
                 if(!produtos.isEmpty()){
@@ -70,6 +71,7 @@ public class ClienteServiceImpl implements ClienteService {
         }
 
     }
+
 
 
     public ClienteRepository getClienteRepository() {
