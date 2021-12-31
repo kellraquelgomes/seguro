@@ -1,10 +1,10 @@
 package com.itau.seguro.services.impl;
 
-import com.itau.seguro.dtos.ClienteProdutoDto;
+import com.itau.seguro.dtos.ClienteDto;
+import com.itau.seguro.models.Cliente;
 import com.itau.seguro.dtos.ProdutoDto;
 import com.itau.seguro.exceptions.BusinessException;
 import com.itau.seguro.exceptions.EntityNotFoundException;
-import com.itau.seguro.models.Cliente;
 import com.itau.seguro.models.Produto;
 import com.itau.seguro.repositories.ClienteRepository;
 import com.itau.seguro.repositories.ProdutoRepository;
@@ -30,14 +30,14 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Transactional
     @Override
-    public ClienteProdutoDto saveClienteProduto(ClienteProdutoDto clienteProdutoDto) {
+    public ClienteDto saveClienteProduto(ClienteDto clienteDto) {
 
         Cliente cliente = new Cliente();
-        verificarClienteProdutoExiste(clienteProdutoDto);
-        BeanUtils.copyProperties(clienteProdutoDto,cliente);
+        verificarClienteProdutoExiste(clienteDto);
+        BeanUtils.copyProperties(clienteDto,cliente);
         cliente = clienteRepository.save(cliente);
 
-        for (ProdutoDto produtoDto: clienteProdutoDto.getProdutos()) {
+        for (ProdutoDto produtoDto: clienteDto.getProdutos()) {
             Optional<Produto> produto = produtoRepository.findById(produtoDto.getProdutoId());
             if(produto.isPresent()){
                 cliente.getProdutos().add(produto.get());
@@ -49,21 +49,21 @@ public class ClienteServiceImpl implements ClienteService {
             }
 
         }
-        BeanUtils.copyProperties(cliente, clienteProdutoDto);
-        return clienteProdutoDto;
+        BeanUtils.copyProperties(cliente, clienteDto);
+        return clienteDto;
     }
 
 
-    private void verificarClienteProdutoExiste(ClienteProdutoDto clienteProdutoDto) {
+    protected void verificarClienteProdutoExiste(ClienteDto clienteDtoProdutoDto) {
 
-        Optional<Cliente> cliente = clienteRepository.findByDocumento(clienteProdutoDto.getDocumento());
+        Optional<Cliente> cliente = clienteRepository.findByDocumento(clienteDtoProdutoDto.getDocumento());
 
         if(cliente.isPresent()){
-            for (ProdutoDto produto: clienteProdutoDto.getProdutos()) {
+            for (ProdutoDto produto: clienteDtoProdutoDto.getProdutos()) {
               List< Produto > produtos =  clienteRepository.findByClienteIdAndProdutos_ProdutoId(cliente.get().getClienteId(), produto.getProdutoId());
 
                 if(!produtos.isEmpty()){
-                   throw new BusinessException( "Cliente ja cadastrado com o produto: "
+                   throw new BusinessException( "ClienteDto ja cadastrado com o produto: "
                            + produto.getNome() + " do Parceiro: "
                            + produto.getParceiro().getNome());
                 }

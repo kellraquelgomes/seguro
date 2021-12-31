@@ -1,9 +1,9 @@
 package com.itau.seguro.services;
 
-import com.itau.seguro.dtos.ClienteProdutoDto;
+import com.itau.seguro.dtos.ClienteDto;
 
 public interface ClienteService {
 
-    ClienteProdutoDto saveClienteProduto(ClienteProdutoDto clienteProdutoDto);
+    ClienteDto saveClienteProduto(ClienteDto clienteDto);
 
 }

@@ -32,41 +32,42 @@ public class ClienteAcionamentoProdutoServiceImpl implements ClienteAcionamentoP
     @Transactional
     public ClienteAcionamentoProdutoDto saveClienteAcionamento(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto) {
         ClienteAcionamentoProduto clienteAcionamentoProduto = new ClienteAcionamentoProduto();
-        verificarProdutoLimiteAcionamento(clienteAcionamentoProdutoDto);
+        Cliente cliente = new Cliente();
+        cliente.setClienteId(clienteAcionamentoProdutoDto.getCliente().getClienteId());
+        Produto produto = new Produto();
+        produto.setProdutoId(clienteAcionamentoProdutoDto.getProduto().getProdutoId());
+        verificarProdutoLimiteAcionamento(clienteAcionamentoProdutoDto,cliente,produto);
+        clienteAcionamentoProduto.setCliente(cliente);
+        clienteAcionamentoProduto.setProduto(produto);
         BeanUtils.copyProperties(clienteAcionamentoProdutoDto,clienteAcionamentoProduto);
         clienteAcionamentoProduto = clienteAcionamentoProdutoRepository.save(clienteAcionamentoProduto);
         BeanUtils.copyProperties(clienteAcionamentoProduto, clienteAcionamentoProdutoDto);
         return clienteAcionamentoProdutoDto;
     }
 
-
-    private void verificarProdutoLimiteAcionamento(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto) {
-        Cliente cliente = new Cliente();
-        cliente.setClienteId(clienteAcionamentoProdutoDto.getClienteId());
-        Produto produto = new Produto();
-        produto.setProdutoId(clienteAcionamentoProdutoDto.getProdutoId());
-
+    protected void verificarProdutoLimiteAcionamento(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto, Cliente cliente, Produto produto) {
         Integer acionamentoProdutoCliente = clienteAcionamentoProdutoRepository.countByClienteAndProduto(
                 cliente, produto);
 
-        Optional<Produto> produtoQuantidadeAcionamento = produtoRepository.findById(clienteAcionamentoProdutoDto.getProdutoId());
+        Optional<Produto> produtoQuantidadeAcionamento = produtoRepository.findById(clienteAcionamentoProdutoDto.getProduto().getProdutoId());
         Integer quantidadeAcionamento = produtoQuantidadeAcionamento.get().getQuantidadeAcionamento();
 
         if(acionamentoProdutoCliente >= quantidadeAcionamento){
 
             throw new BusinessException("Não é possivel acionar o seguro,o número de acionamento está no limite.");
         }
-        List<ClienteAcionamentoProduto> clienteAcionamentoProdutos = clienteAcionamentoProdutoRepository.findByClienteAndProdutoOrderByDataAcionamentoDesc(cliente,produto);
+        verificarPeriodoAcionamentoProdutoCliente(clienteAcionamentoProdutoDto, cliente, produto);
+    }
+
+    protected void verificarPeriodoAcionamentoProdutoCliente(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto, Cliente cliente, Produto produto) {
+        List< ClienteAcionamentoProduto > clienteAcionamentoProdutos = clienteAcionamentoProdutoRepository.findByClienteAndProdutoOrderByDataAcionamentoDesc(cliente,produto);
 
         if(!clienteAcionamentoProdutos.isEmpty()){
-            int days = Days.daysBetween(clienteAcionamentoProdutoDto.getDataAcionamento(), clienteAcionamentoProdutos.get(0).getDataAcionamento()).getDays();
-
+            int days = Days.daysBetween(clienteAcionamentoProdutos.get(0).getDataAcionamento(),clienteAcionamentoProdutoDto.getDataAcionamento()).getDays();
             if(days <= 30){
                 throw new BusinessException("O período entre os acionamentos do mesmo produtos, é de no mínimo " +
-                        "30 dias, a partir da data do último acionamento na data " +
-                        clienteAcionamentoProdutos.get(0).getDataAcionamento());
+                        "30 dias, a partir da data do último acionamento.");
             }
-
         }
     }
 

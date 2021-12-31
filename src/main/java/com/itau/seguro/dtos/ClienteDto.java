@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ClienteProdutoDto {
+public class ClienteDto {
 
     private Integer clienteId;
 

@@ -7,7 +7,6 @@ import lombok.Data;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
