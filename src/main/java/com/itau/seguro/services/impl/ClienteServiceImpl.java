@@ -1,10 +1,13 @@
 package com.itau.seguro.services.impl;
 
+import com.itau.seguro.dtos.ClienteAcionamentoProdutoDto;
 import com.itau.seguro.dtos.ClienteDto;
-import com.itau.seguro.models.Cliente;
+import com.itau.seguro.dtos.ParceiroDto;
 import com.itau.seguro.dtos.ProdutoDto;
 import com.itau.seguro.exceptions.BusinessException;
 import com.itau.seguro.exceptions.EntityNotFoundException;
+import com.itau.seguro.models.Cliente;
+import com.itau.seguro.models.ClienteAcionamentoProduto;
 import com.itau.seguro.models.Produto;
 import com.itau.seguro.repositories.ClienteRepository;
 import com.itau.seguro.repositories.ProdutoRepository;
@@ -14,35 +17,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ClienteServiceImpl implements ClienteService {
-
-
     @Autowired
     private ClienteRepository clienteRepository;
 
     @Autowired
     private ProdutoRepository produtoRepository;
 
-
     @Transactional
     @Override
     public ClienteDto saveClienteProduto(ClienteDto clienteDto) {
-
         Cliente cliente = new Cliente();
         verificarClienteProdutoExiste(clienteDto);
         BeanUtils.copyProperties(clienteDto,cliente);
         cliente = clienteRepository.save(cliente);
-
         for (ProdutoDto produtoDto: clienteDto.getProdutos()) {
             Optional<Produto> produto = produtoRepository.findById(produtoDto.getProdutoId());
-            if(produto.isPresent()){
+            if (produto.isPresent()){
                 cliente.getProdutos().add(produto.get());
             }
-            else{
+            else {
                 throw new EntityNotFoundException( "Produto "
                         + produtoDto.getNome() + " do Parceiro "
                         + produtoDto.getParceiro().getNome() + " não está cadastrado.");
@@ -53,17 +52,53 @@ public class ClienteServiceImpl implements ClienteService {
         return clienteDto;
     }
 
+    @Override
+    public ClienteDto findClienteProdutosAcionamentos(ClienteDto clienteDto) {
+        Optional< Cliente > cliente = findByDocumento(clienteDto);
+        if (cliente.isPresent()) {
+            clienteDto.setDocumento(cliente.get().getDocumento());
+            clienteDto.setClienteId(cliente.get().getClienteId());
+            clienteDto.setNome(cliente.get().getNome());
+            List<ProdutoDto> produtoDtoList = new ArrayList<ProdutoDto>();
+            for (Produto produto: cliente.get().getProdutos()) {
+                ProdutoDto produtoDto = new ProdutoDto();
+                produtoDto.setProdutoId(produto.getProdutoId());
+                produtoDto.setNome(produto.getNome());
+                produtoDto.setValor(produto.getValor());
+                produtoDto.setQuantidadeAcionamento(produto.getQuantidadeAcionamento());
+                ParceiroDto parceiroDto = new ParceiroDto();
+                parceiroDto.setNome(produto.getParceiro().getNome());
+                parceiroDto.setCodigo(produto.getParceiro().getParceiroId());
+                produtoDtoList.add(produtoDto);
 
-    protected void verificarClienteProdutoExiste(ClienteDto clienteDtoProdutoDto) {
+                List<ClienteAcionamentoProdutoDto> clienteAcionamentoProdutoDtoList = new ArrayList<ClienteAcionamentoProdutoDto>();
 
-        Optional<Cliente> cliente = clienteRepository.findByDocumento(clienteDtoProdutoDto.getDocumento());
+                for (ClienteAcionamentoProduto clienteAcionamentoProduto: cliente.get().getAcionamentos()) {
+                    ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto = new ClienteAcionamentoProdutoDto();
+                    clienteAcionamentoProdutoDto.setDataAcionamento(clienteAcionamentoProduto.getDataAcionamento());
+                    clienteAcionamentoProdutoDtoList.add(clienteAcionamentoProdutoDto);
+                }
 
-        if(cliente.isPresent()){
-            for (ProdutoDto produto: clienteDtoProdutoDto.getProdutos()) {
+                produtoDto.setAcionamentos(clienteAcionamentoProdutoDtoList);
+
+            }
+            clienteDto.setProdutos(produtoDtoList);
+
+        } else {
+            throw new EntityNotFoundException("Cliente não cadastrado.");
+        }
+
+        return clienteDto;
+    }
+
+    protected void verificarClienteProdutoExiste(ClienteDto clienteDto) {
+        Optional< Cliente > cliente = findByDocumento(clienteDto);
+        if (cliente.isPresent()){
+            for (ProdutoDto produto: clienteDto.getProdutos()) {
               List< Produto > produtos =  clienteRepository.findByClienteIdAndProdutos_ProdutoId(cliente.get().getClienteId(), produto.getProdutoId());
 
-                if(!produtos.isEmpty()){
-                   throw new BusinessException( "ClienteDto ja cadastrado com o produto: "
+                if (!produtos.isEmpty()){
+                   throw new BusinessException( "Cliente ja cadastrado com o produto: "
                            + produto.getNome() + " do Parceiro: "
                            + produto.getParceiro().getNome());
                 }
@@ -72,18 +107,12 @@ public class ClienteServiceImpl implements ClienteService {
 
     }
 
-
-
-    public ClienteRepository getClienteRepository() {
-        return clienteRepository;
+    private Optional< Cliente > findByDocumento(ClienteDto clienteDto) {
+        return clienteRepository.findByDocumento(clienteDto.getDocumento());
     }
 
     public void setClienteRepository(ClienteRepository clienteRepository) {
         this.clienteRepository = clienteRepository;
-    }
-
-    public ProdutoRepository getProdutoRepository() {
-        return produtoRepository;
     }
 
     public void setProdutoRepository(ProdutoRepository produtoRepository) {

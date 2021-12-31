@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class ProdutoDto {
@@ -19,12 +20,13 @@ public class ProdutoDto {
     @NotNull
     private BigDecimal valor;
 
-
     private Integer quantidadeAcionamento;
 
     @NotBlank
     @NotNull
     private ParceiroDto parceiro;
+
+    private List<ClienteAcionamentoProdutoDto> acionamentos;
 
 
 }

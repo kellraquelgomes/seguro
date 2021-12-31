@@ -10,7 +10,6 @@ import com.itau.seguro.models.Parceiro;
 import com.itau.seguro.models.Produto;
 import com.itau.seguro.repositories.ClienteRepository;
 import com.itau.seguro.repositories.ProdutoRepository;
-import com.itau.seguro.services.impl.ClienteServiceImpl;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
@@ -197,7 +196,7 @@ public class ClienteServiceImplTest {
             service.saveClienteProduto(clienteDto);
         } catch (BusinessException b) {
             context.assertIsSatisfied();
-            assertEquals("ClienteDto ja cadastrado com o produto: Seguro Vida do Parceiro: com Você", b.getMessage());
+            assertEquals("Cliente ja cadastrado com o produto: Seguro Vida do Parceiro: com Você", b.getMessage());
             return;
         }
         fail("Nao lancou exception");

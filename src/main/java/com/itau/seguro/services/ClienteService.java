@@ -6,4 +6,8 @@ public interface ClienteService {
 
     ClienteDto saveClienteProduto(ClienteDto clienteDto);
 
+    ClienteDto findClienteProdutosAcionamentos(ClienteDto clienteDto);
+
+
+
 }

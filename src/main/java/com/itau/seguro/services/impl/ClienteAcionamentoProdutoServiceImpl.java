@@ -71,16 +71,8 @@ public class ClienteAcionamentoProdutoServiceImpl implements ClienteAcionamentoP
         }
     }
 
-    public ClienteAcionamentoProdutoRepository getClienteAcionamentoProdutoRepository() {
-        return clienteAcionamentoProdutoRepository;
-    }
-
     public void setClienteAcionamentoProdutoRepository(ClienteAcionamentoProdutoRepository clienteAcionamentoProdutoRepository) {
         this.clienteAcionamentoProdutoRepository = clienteAcionamentoProdutoRepository;
-    }
-
-    public ProdutoRepository getProdutoRepository() {
-        return produtoRepository;
     }
 
     public void setProdutoRepository(ProdutoRepository produtoRepository) {
