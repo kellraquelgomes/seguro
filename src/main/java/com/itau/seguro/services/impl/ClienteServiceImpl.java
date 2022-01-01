@@ -9,9 +9,12 @@ import com.itau.seguro.exceptions.EntityNotFoundException;
 import com.itau.seguro.models.Cliente;
 import com.itau.seguro.models.ClienteAcionamentoProduto;
 import com.itau.seguro.models.Produto;
+import com.itau.seguro.repositories.ClienteAcionamentoProdutoRepository;
 import com.itau.seguro.repositories.ClienteRepository;
 import com.itau.seguro.repositories.ProdutoRepository;
 import com.itau.seguro.services.ClienteService;
+import lombok.AccessLevel;
+import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,11 +26,19 @@ import java.util.Optional;
 
 @Service
 public class ClienteServiceImpl implements ClienteService {
+
     @Autowired
+    @Setter(AccessLevel.PROTECTED)
     private ClienteRepository clienteRepository;
 
     @Autowired
+    @Setter(AccessLevel.PROTECTED)
     private ProdutoRepository produtoRepository;
+
+    @Autowired
+    @Setter(AccessLevel.PROTECTED)
+    private ClienteAcionamentoProdutoRepository clienteAcionamentoProdutoRepository;
+
 
     @Transactional
     @Override
@@ -52,15 +63,23 @@ public class ClienteServiceImpl implements ClienteService {
         return clienteDto;
     }
 
+
     @Override
     public ClienteDto findClienteProdutosAcionamentos(ClienteDto clienteDto) {
+
         Optional< Cliente > cliente = findByDocumento(clienteDto);
+
         if (cliente.isPresent()) {
+
             clienteDto.setDocumento(cliente.get().getDocumento());
             clienteDto.setClienteId(cliente.get().getClienteId());
             clienteDto.setNome(cliente.get().getNome());
+
             List<ProdutoDto> produtoDtoList = new ArrayList<ProdutoDto>();
-            for (Produto produto: cliente.get().getProdutos()) {
+
+
+            cliente.get().getProdutos().forEach(produto -> {
+
                 ProdutoDto produtoDto = new ProdutoDto();
                 produtoDto.setProdutoId(produto.getProdutoId());
                 produtoDto.setNome(produto.getNome());
@@ -69,19 +88,28 @@ public class ClienteServiceImpl implements ClienteService {
                 ParceiroDto parceiroDto = new ParceiroDto();
                 parceiroDto.setNome(produto.getParceiro().getNome());
                 parceiroDto.setCodigo(produto.getParceiro().getParceiroId());
+                produtoDto.setParceiro(parceiroDto);
                 produtoDtoList.add(produtoDto);
 
-                List<ClienteAcionamentoProdutoDto> clienteAcionamentoProdutoDtoList = new ArrayList<ClienteAcionamentoProdutoDto>();
+                List<ClienteAcionamentoProduto> acionamentos =
+                        clienteAcionamentoProdutoRepository
+                                .findByClienteAndProdutoOrderByDataAcionamentoDesc(cliente.get(), produto);
 
-                for (ClienteAcionamentoProduto clienteAcionamentoProduto: cliente.get().getAcionamentos()) {
+                List<ClienteAcionamentoProdutoDto> acionamentosDtos = new ArrayList<>();
+
+                acionamentos.forEach(clienteAcionamentoProduto -> {
+
                     ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto = new ClienteAcionamentoProdutoDto();
                     clienteAcionamentoProdutoDto.setDataAcionamento(clienteAcionamentoProduto.getDataAcionamento());
-                    clienteAcionamentoProdutoDtoList.add(clienteAcionamentoProdutoDto);
-                }
+                    acionamentosDtos.add(clienteAcionamentoProdutoDto);
 
-                produtoDto.setAcionamentos(clienteAcionamentoProdutoDtoList);
+                });
 
-            }
+
+                produtoDto.setAcionamentos(acionamentosDtos);
+
+            });
+
             clienteDto.setProdutos(produtoDtoList);
 
         } else {
@@ -90,6 +118,7 @@ public class ClienteServiceImpl implements ClienteService {
 
         return clienteDto;
     }
+
 
     protected void verificarClienteProdutoExiste(ClienteDto clienteDto) {
         Optional< Cliente > cliente = findByDocumento(clienteDto);
@@ -111,12 +140,5 @@ public class ClienteServiceImpl implements ClienteService {
         return clienteRepository.findByDocumento(clienteDto.getDocumento());
     }
 
-    public void setClienteRepository(ClienteRepository clienteRepository) {
-        this.clienteRepository = clienteRepository;
-    }
-
-    public void setProdutoRepository(ProdutoRepository produtoRepository) {
-        this.produtoRepository = produtoRepository;
-    }
 
 }
