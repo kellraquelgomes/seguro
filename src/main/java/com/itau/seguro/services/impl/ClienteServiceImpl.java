@@ -42,7 +42,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Transactional
     @Override
-    public ClienteDto saveClienteProduto(ClienteDto clienteDto) {
+    public void saveClienteProduto(ClienteDto clienteDto) {
 
         Cliente cliente = new Cliente();
 
@@ -58,16 +58,14 @@ public class ClienteServiceImpl implements ClienteService {
 
             if (produto.isPresent()){
                 cliente.getProdutos().add(produto.get());
+
             }
             else {
                 throw new EntityNotFoundException( "Produto "
-                        + produtoDto.getNome() + " do Parceiro "
-                        + produtoDto.getParceiro().getNome() + " não está cadastrado.");
+                        + produtoDto.getNome() + " não está cadastrado.");
             }
 
         }
-        BeanUtils.copyProperties(cliente, clienteDto);
-        return clienteDto;
     }
 
 
@@ -133,12 +131,10 @@ public class ClienteServiceImpl implements ClienteService {
         if (cliente.isPresent()){
             for (ProdutoDto produto: clienteDto.getProdutos()) {
 
-              List< Produto > produtos =  clienteRepository.findByClienteIdAndProdutos_ProdutoId(cliente.get().getClienteId(), produto.getProdutoId());
+              List< Produto > produtos =  produtoRepository.findByClientesAndProdutoId(cliente.get(), produto.getProdutoId());
 
                 if (!produtos.isEmpty()){
-                   throw new BusinessException( "Cliente ja cadastrado com o produto: "
-                           + produto.getNome() + " do Parceiro: "
-                           + produto.getParceiro().getNome());
+                   throw new BusinessException( "Cliente ja cadastrado com o produtoID: " +  produto.getProdutoId());
                 }
             }
         }

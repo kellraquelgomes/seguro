@@ -2,6 +2,7 @@ package com.itau.seguro.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -13,6 +14,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "TB_CLIENTE")
+@EqualsAndHashCode(of = {"clienteId"})
 public class Cliente implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -1,8 +1,8 @@
 package com.itau.seguro.enums;
 
 public enum ParceiroEnum {
-    COM_vOCE(1, "com Você"),
-    MAIS_VOCE(2, "Mais Você");
+    COM_vOCE(1, "Com você"),
+    VIDA_MAIS(2, "Vida mais");
 
     private Integer codigo;
     private String descricao;

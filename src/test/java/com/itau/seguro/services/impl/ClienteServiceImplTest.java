@@ -59,8 +59,8 @@ public class ClienteServiceImplTest {
         produtoSeguroAltoDto.setProdutoId(new Integer(6));
         produtoSeguroAltoDto.setNome("Seguro Auto");
         final ParceiroDto parceiroMaisVoceDto = new ParceiroDto();
-        parceiroMaisVoceDto.setCodigo(ParceiroEnum.MAIS_VOCE.getCodigo());
-        parceiroMaisVoceDto.setNome(ParceiroEnum.MAIS_VOCE.getDescricao());
+        parceiroMaisVoceDto.setCodigo(ParceiroEnum.VIDA_MAIS.getCodigo());
+        parceiroMaisVoceDto.setNome(ParceiroEnum.VIDA_MAIS.getDescricao());
         produtoSeguroAltoDto.setParceiro(parceiroMaisVoceDto);
 
         final List< ProdutoDto > produtosDto = new ArrayList<ProdutoDto>();
@@ -98,8 +98,8 @@ public class ClienteServiceImplTest {
         produtoSeguroAlto.get().setNome("Seguro Auto");
 
         final Parceiro parceiroMaisVoce = new Parceiro();
-        parceiroMaisVoce.setParceiroId(ParceiroEnum.MAIS_VOCE.getCodigo());
-        parceiroMaisVoce.setNome(ParceiroEnum.MAIS_VOCE.getDescricao());
+        parceiroMaisVoce.setParceiroId(ParceiroEnum.VIDA_MAIS.getCodigo());
+        parceiroMaisVoce.setNome(ParceiroEnum.VIDA_MAIS.getDescricao());
         produtoSeguroAlto.get().setParceiro(parceiroMaisVoce);
 
         final Set< Produto > produtos = new HashSet<>();
@@ -122,8 +122,7 @@ public class ClienteServiceImplTest {
         });
         service.setClienteRepository(repository);
         service.setProdutoRepository(repositoryProduto);
-        final ClienteDto clienteDtoProdutoDtoRetorno = service.saveClienteProduto(clienteDto);
-        assertNotNull(clienteDtoProdutoDtoRetorno);
+        service.saveClienteProduto(clienteDto);
         context.assertIsSatisfied();
     }
 
@@ -153,8 +152,8 @@ public class ClienteServiceImplTest {
         produtoSeguroAltoDto.setNome("Seguro Auto");
 
         final ParceiroDto parceiroMaisVoceDto = new ParceiroDto();
-        parceiroMaisVoceDto.setCodigo(ParceiroEnum.MAIS_VOCE.getCodigo());
-        parceiroMaisVoceDto.setNome(ParceiroEnum.MAIS_VOCE.getDescricao());
+        parceiroMaisVoceDto.setCodigo(ParceiroEnum.VIDA_MAIS.getCodigo());
+        parceiroMaisVoceDto.setNome(ParceiroEnum.VIDA_MAIS.getDescricao());
         produtoSeguroAltoDto.setParceiro(parceiroMaisVoceDto);
 
         final List< ProdutoDto > produtosDto = new ArrayList<ProdutoDto>();
@@ -182,8 +181,8 @@ public class ClienteServiceImplTest {
         produtoSeguroAlto.get().setNome("Seguro Auto");
 
         final Parceiro parceiroMaisVoce = new Parceiro();
-        parceiroMaisVoce.setParceiroId(ParceiroEnum.MAIS_VOCE.getCodigo());
-        parceiroMaisVoce.setNome(ParceiroEnum.MAIS_VOCE.getDescricao());
+        parceiroMaisVoce.setParceiroId(ParceiroEnum.VIDA_MAIS.getCodigo());
+        parceiroMaisVoce.setNome(ParceiroEnum.VIDA_MAIS.getDescricao());
         produtoSeguroAlto.get().setParceiro(parceiroMaisVoce);
 
         final Set< Produto > produtos = new HashSet<>();
@@ -198,7 +197,7 @@ public class ClienteServiceImplTest {
             {
                 oneOf(repository).findByDocumento(with(clienteDto.getDocumento()));
                 will(returnValue(clienteExiste));
-                oneOf(repository).findByClienteIdAndProdutos_ProdutoId(with(clienteExiste.get().getClienteId()),
+                oneOf(repositoryProduto).findByClientesAndProdutoId(with(clienteExiste.get()),
                         with(clienteDto.getProdutos().get(0).getProdutoId()));
                 will(returnValue(listaProduto));
                 never(repository).save(with(any(com.itau.seguro.models.Cliente.class)));
@@ -214,7 +213,7 @@ public class ClienteServiceImplTest {
             service.saveClienteProduto(clienteDto);
         } catch (BusinessException b) {
             context.assertIsSatisfied();
-            assertEquals("Cliente ja cadastrado com o produto: Seguro Vida do Parceiro: com Você", b.getMessage());
+            assertEquals("Cliente ja cadastrado com o produtoID: " + clienteDto.getProdutos().get(0).getProdutoId(), b.getMessage());
             return;
         }
         fail("Nao lancou exception");
@@ -247,8 +246,8 @@ public class ClienteServiceImplTest {
         produtoSeguroAltoDto.setNome("Seguro Auto");
 
         final ParceiroDto parceiroMaisVoceDto = new ParceiroDto();
-        parceiroMaisVoceDto.setCodigo(ParceiroEnum.MAIS_VOCE.getCodigo());
-        parceiroMaisVoceDto.setNome(ParceiroEnum.MAIS_VOCE.getDescricao());
+        parceiroMaisVoceDto.setCodigo(ParceiroEnum.VIDA_MAIS.getCodigo());
+        parceiroMaisVoceDto.setNome(ParceiroEnum.VIDA_MAIS.getDescricao());
         produtoSeguroAltoDto.setParceiro(parceiroMaisVoceDto);
 
         final List< ProdutoDto > produtosDto = new ArrayList<ProdutoDto>();
@@ -290,7 +289,7 @@ public class ClienteServiceImplTest {
             service.saveClienteProduto(clienteDto);
         } catch (EntityNotFoundException b) {
             context.assertIsSatisfied();
-            assertEquals("Produto Seguro Vida do Parceiro com Você não está cadastrado.", b.getMessage());
+            assertEquals("Produto Seguro Vida não está cadastrado.", b.getMessage());
             return;
         }
         fail("Nao lancou exception");
@@ -332,8 +331,8 @@ public class ClienteServiceImplTest {
         produtoSeguroAlto.setValor(new BigDecimal(300.00));
         produtoSeguroAlto.setQuantidadeAcionamento(new Integer(3));
         final Parceiro parceiroMaisVoce = new Parceiro();
-        parceiroMaisVoce.setParceiroId(ParceiroEnum.MAIS_VOCE.getCodigo());
-        parceiroMaisVoce.setNome(ParceiroEnum.MAIS_VOCE.getDescricao());
+        parceiroMaisVoce.setParceiroId(ParceiroEnum.VIDA_MAIS.getCodigo());
+        parceiroMaisVoce.setNome(ParceiroEnum.VIDA_MAIS.getDescricao());
         produtoSeguroAlto.setParceiro(parceiroMaisVoce);
 
         final HashSet< Produto > produtos = new HashSet<>();
@@ -383,18 +382,18 @@ public class ClienteServiceImplTest {
         Assert.assertEquals("Pedro Alves",clienteDtoProdutoDtoRetorno.getNome());
         Assert.assertEquals("28570368097",clienteDtoProdutoDtoRetorno.getDocumento());
 
-        Assert.assertEquals("com Você",clienteDtoProdutoDtoRetorno.getProdutos().get(0).getParceiro().getNome());
-        Assert.assertEquals("Seguro Vida",clienteDtoProdutoDtoRetorno.getProdutos().get(0).getNome());
-        Assert.assertEquals(new BigDecimal(200.00),clienteDtoProdutoDtoRetorno.getProdutos().get(0).getValor());
-        Assert.assertEquals(new Integer(1),clienteDtoProdutoDtoRetorno.getProdutos().get(0).getQuantidadeAcionamento());
-        Assert.assertEquals(converterStringParaDateTime("2022-01-12"),clienteDtoProdutoDtoRetorno.getProdutos().get(0).getAcionamentos().get(0).getDataAcionamento());
-        Assert.assertEquals(converterStringParaDateTime("2022-03-12"),clienteDtoProdutoDtoRetorno.getProdutos().get(0).getAcionamentos().get(1).getDataAcionamento());
+        Assert.assertEquals("Vida mais",clienteDtoProdutoDtoRetorno.getProdutos().get(0).getParceiro().getNome());
+        Assert.assertEquals("Seguro Auto",clienteDtoProdutoDtoRetorno.getProdutos().get(0).getNome());
+        Assert.assertEquals(new BigDecimal(300.00),clienteDtoProdutoDtoRetorno.getProdutos().get(0).getValor());
+        Assert.assertEquals(new Integer(3),clienteDtoProdutoDtoRetorno.getProdutos().get(0).getQuantidadeAcionamento());
+        Assert.assertEquals(converterStringParaDateTime("2022-03-12"),clienteDtoProdutoDtoRetorno.getProdutos().get(0).getAcionamentos().get(0).getDataAcionamento());
 
-        Assert.assertEquals("Mais Você",clienteDtoProdutoDtoRetorno.getProdutos().get(1).getParceiro().getNome());
-        Assert.assertEquals("Seguro Auto",clienteDtoProdutoDtoRetorno.getProdutos().get(1).getNome());
-        Assert.assertEquals(new BigDecimal(300.00),clienteDtoProdutoDtoRetorno.getProdutos().get(1).getValor());
-        Assert.assertEquals(new Integer(3),clienteDtoProdutoDtoRetorno.getProdutos().get(1).getQuantidadeAcionamento());
-        Assert.assertEquals(converterStringParaDateTime("2022-03-12"),clienteDtoProdutoDtoRetorno.getProdutos().get(1).getAcionamentos().get(0).getDataAcionamento());
+        Assert.assertEquals("Com você",clienteDtoProdutoDtoRetorno.getProdutos().get(1).getParceiro().getNome());
+        Assert.assertEquals("Seguro Vida",clienteDtoProdutoDtoRetorno.getProdutos().get(1).getNome());
+        Assert.assertEquals(new BigDecimal(200.00),clienteDtoProdutoDtoRetorno.getProdutos().get(1).getValor());
+        Assert.assertEquals(new Integer(1),clienteDtoProdutoDtoRetorno.getProdutos().get(1).getQuantidadeAcionamento());
+        Assert.assertEquals(converterStringParaDateTime("2022-01-12"),clienteDtoProdutoDtoRetorno.getProdutos().get(1).getAcionamentos().get(0).getDataAcionamento());
+        Assert.assertEquals(converterStringParaDateTime("2022-03-12"),clienteDtoProdutoDtoRetorno.getProdutos().get(1).getAcionamentos().get(1).getDataAcionamento());
 
         assertNotNull(clienteDtoProdutoDtoRetorno);
         context.assertIsSatisfied();
