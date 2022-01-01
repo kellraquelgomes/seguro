@@ -333,11 +333,15 @@ public class ClienteServiceImplTest {
         final ClienteAcionamentoProduto clienteAcionamentoProdutoSeguroVida = new ClienteAcionamentoProduto();
         clienteAcionamentoProdutoSeguroVida.setDataAcionamento(converterStringParaDateTime("2022-01-12"));
 
+        final ClienteAcionamentoProduto clienteAcionamentoProdutoSeguroVida_SegundoAcionamento = new ClienteAcionamentoProduto();
+        clienteAcionamentoProdutoSeguroVida_SegundoAcionamento.setDataAcionamento(converterStringParaDateTime("2022-03-12"));
+
         final ClienteAcionamentoProduto clienteAcionamentoProdutoSeguroAlto = new ClienteAcionamentoProduto();
         clienteAcionamentoProdutoSeguroAlto.setDataAcionamento(converterStringParaDateTime("2022-03-12"));
 
         final HashSet< ClienteAcionamentoProduto > clienteAcionamentoProdutos = new HashSet<>();
         clienteAcionamentoProdutos.add(clienteAcionamentoProdutoSeguroVida);
+        clienteAcionamentoProdutos.add(clienteAcionamentoProdutoSeguroVida_SegundoAcionamento);
         clienteAcionamentoProdutos.add(clienteAcionamentoProdutoSeguroAlto);
 
         cliente.get().setAcionamentos(clienteAcionamentoProdutos);
@@ -350,7 +354,7 @@ public class ClienteServiceImplTest {
 
                 oneOf(clienteAcionamentoProdutoRepository)
                         .findByClienteAndProdutoOrderByDataAcionamentoDesc(with(cliente.get()), with(produtoSeguroVida));
-                will(returnValue(Arrays.asList(clienteAcionamentoProdutoSeguroVida)));
+                will(returnValue(Arrays.asList(clienteAcionamentoProdutoSeguroVida,clienteAcionamentoProdutoSeguroVida_SegundoAcionamento)));
 
                 oneOf(clienteAcionamentoProdutoRepository)
                         .findByClienteAndProdutoOrderByDataAcionamentoDesc(with(cliente.get()), with(produtoSeguroAlto));
@@ -371,9 +375,9 @@ public class ClienteServiceImplTest {
         Assert.assertEquals("com Você",clienteDtoProdutoDtoRetorno.getProdutos().get(0).getParceiro().getNome());
         Assert.assertEquals("Seguro Vida",clienteDtoProdutoDtoRetorno.getProdutos().get(0).getNome());
         Assert.assertEquals(new BigDecimal(200.00),clienteDtoProdutoDtoRetorno.getProdutos().get(0).getValor());
-        Assert.assertEquals("Seguro Vida",clienteDtoProdutoDtoRetorno.getProdutos().get(0).getNome());
         Assert.assertEquals(new Integer(1),clienteDtoProdutoDtoRetorno.getProdutos().get(0).getQuantidadeAcionamento());
         Assert.assertEquals(converterStringParaDateTime("2022-01-12"),clienteDtoProdutoDtoRetorno.getProdutos().get(0).getAcionamentos().get(0).getDataAcionamento());
+        Assert.assertEquals(converterStringParaDateTime("2022-03-12"),clienteDtoProdutoDtoRetorno.getProdutos().get(0).getAcionamentos().get(1).getDataAcionamento());
 
         Assert.assertEquals("Mais Você",clienteDtoProdutoDtoRetorno.getProdutos().get(1).getParceiro().getNome());
         Assert.assertEquals("Seguro Auto",clienteDtoProdutoDtoRetorno.getProdutos().get(1).getNome());
