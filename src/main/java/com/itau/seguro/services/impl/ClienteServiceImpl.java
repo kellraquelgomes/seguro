@@ -43,12 +43,19 @@ public class ClienteServiceImpl implements ClienteService {
     @Transactional
     @Override
     public ClienteDto saveClienteProduto(ClienteDto clienteDto) {
+
         Cliente cliente = new Cliente();
+
         verificarClienteProdutoExiste(clienteDto);
+
         BeanUtils.copyProperties(clienteDto,cliente);
+
         cliente = clienteRepository.save(cliente);
+
         for (ProdutoDto produtoDto: clienteDto.getProdutos()) {
+
             Optional<Produto> produto = produtoRepository.findById(produtoDto.getProdutoId());
+
             if (produto.isPresent()){
                 cliente.getProdutos().add(produto.get());
             }
@@ -76,7 +83,6 @@ public class ClienteServiceImpl implements ClienteService {
             clienteDto.setNome(cliente.get().getNome());
 
             List<ProdutoDto> produtoDtoList = new ArrayList<ProdutoDto>();
-
 
             cliente.get().getProdutos().forEach(produto -> {
 
@@ -121,9 +127,12 @@ public class ClienteServiceImpl implements ClienteService {
 
 
     protected void verificarClienteProdutoExiste(ClienteDto clienteDto) {
+
         Optional< Cliente > cliente = findByDocumento(clienteDto);
+
         if (cliente.isPresent()){
             for (ProdutoDto produto: clienteDto.getProdutos()) {
+
               List< Produto > produtos =  clienteRepository.findByClienteIdAndProdutos_ProdutoId(cliente.get().getClienteId(), produto.getProdutoId());
 
                 if (!produtos.isEmpty()){
@@ -136,9 +145,9 @@ public class ClienteServiceImpl implements ClienteService {
 
     }
 
-    private Optional< Cliente > findByDocumento(ClienteDto clienteDto) {
+    protected Optional< Cliente > findByDocumento(ClienteDto clienteDto) {
+
         return clienteRepository.findByDocumento(clienteDto.getDocumento());
     }
-
 
 }

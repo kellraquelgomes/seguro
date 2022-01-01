@@ -8,6 +8,8 @@ import com.itau.seguro.models.Produto;
 import com.itau.seguro.repositories.ClienteAcionamentoProdutoRepository;
 import com.itau.seguro.repositories.ProdutoRepository;
 import com.itau.seguro.services.ClienteAcionamentoProdutoService;
+import lombok.AccessLevel;
+import lombok.Setter;
 import org.joda.time.Days;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +22,11 @@ import java.util.Optional;
 @Service
 public class ClienteAcionamentoProdutoServiceImpl implements ClienteAcionamentoProdutoService {
 
-
+    @Setter(AccessLevel.PROTECTED)
     @Autowired
     private ClienteAcionamentoProdutoRepository clienteAcionamentoProdutoRepository;
 
+    @Setter(AccessLevel.PROTECTED)
     @Autowired
     private ProdutoRepository produtoRepository;
 
@@ -31,25 +34,36 @@ public class ClienteAcionamentoProdutoServiceImpl implements ClienteAcionamentoP
     @Override
     @Transactional
     public ClienteAcionamentoProdutoDto saveClienteAcionamento(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto) {
+
         ClienteAcionamentoProduto clienteAcionamentoProduto = new ClienteAcionamentoProduto();
+
         Cliente cliente = new Cliente();
         cliente.setClienteId(clienteAcionamentoProdutoDto.getCliente().getClienteId());
+
         Produto produto = new Produto();
         produto.setProdutoId(clienteAcionamentoProdutoDto.getProduto().getProdutoId());
+
         verificarProdutoLimiteAcionamento(clienteAcionamentoProdutoDto,cliente,produto);
+
         clienteAcionamentoProduto.setCliente(cliente);
         clienteAcionamentoProduto.setProduto(produto);
+
         BeanUtils.copyProperties(clienteAcionamentoProdutoDto,clienteAcionamentoProduto);
+
         clienteAcionamentoProduto = clienteAcionamentoProdutoRepository.save(clienteAcionamentoProduto);
+
         BeanUtils.copyProperties(clienteAcionamentoProduto, clienteAcionamentoProdutoDto);
+
         return clienteAcionamentoProdutoDto;
     }
 
     protected void verificarProdutoLimiteAcionamento(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto, Cliente cliente, Produto produto) {
+
         Integer acionamentoProdutoCliente = clienteAcionamentoProdutoRepository.countByClienteAndProduto(
                 cliente, produto);
 
         Optional<Produto> produtoQuantidadeAcionamento = produtoRepository.findById(clienteAcionamentoProdutoDto.getProduto().getProdutoId());
+
         Integer quantidadeAcionamento = produtoQuantidadeAcionamento.get().getQuantidadeAcionamento();
 
         if(acionamentoProdutoCliente >= quantidadeAcionamento){
@@ -70,14 +84,5 @@ public class ClienteAcionamentoProdutoServiceImpl implements ClienteAcionamentoP
             }
         }
     }
-
-    public void setClienteAcionamentoProdutoRepository(ClienteAcionamentoProdutoRepository clienteAcionamentoProdutoRepository) {
-        this.clienteAcionamentoProdutoRepository = clienteAcionamentoProdutoRepository;
-    }
-
-    public void setProdutoRepository(ProdutoRepository produtoRepository) {
-        this.produtoRepository = produtoRepository;
-    }
-
 
 }

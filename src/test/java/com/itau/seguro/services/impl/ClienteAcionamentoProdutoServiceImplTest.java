@@ -54,7 +54,7 @@ public class ClienteAcionamentoProdutoServiceImplTest {
         produtoOptional.get().setProdutoId(new Integer(1));
         produtoOptional.get().setQuantidadeAcionamento(new Integer(2));
 
-        List< ClienteAcionamentoProduto > clienteAcionamentoProdutos = new ArrayList<ClienteAcionamentoProduto>();
+        final List< ClienteAcionamentoProduto > clienteAcionamentoProdutos = new ArrayList<ClienteAcionamentoProduto>();
         ClienteAcionamentoProduto clienteAcionamentoProduto = new ClienteAcionamentoProduto();
         clienteAcionamentoProduto.setCliente(cliente);
         clienteAcionamentoProduto.setProduto(produto);
@@ -68,6 +68,7 @@ public class ClienteAcionamentoProdutoServiceImplTest {
         clienteRetorno.setClienteId(new Integer(1));
         final Produto produtoRetorno = new Produto();
         produtoRetorno.setProdutoId(new Integer(1));
+
         clienteAcionamentoProdutoRetorno.setCliente(clienteRetorno);
         clienteAcionamentoProdutoRetorno.setProduto(produtoRetorno);
         clienteAcionamentoProdutoRetorno.setDataAcionamento(new DateTime("2022-01-05"));
@@ -163,7 +164,7 @@ public class ClienteAcionamentoProdutoServiceImplTest {
         produtoOptional.get().setProdutoId(new Integer(1));
         produtoOptional.get().setQuantidadeAcionamento(new Integer(2));
 
-        List< ClienteAcionamentoProduto > clienteAcionamentoProdutos = new ArrayList<ClienteAcionamentoProduto>();
+        final List< ClienteAcionamentoProduto > clienteAcionamentoProdutos = new ArrayList<ClienteAcionamentoProduto>();
         ClienteAcionamentoProduto clienteAcionamentoProduto = new ClienteAcionamentoProduto();
 
         final Cliente cliente = new Cliente();
