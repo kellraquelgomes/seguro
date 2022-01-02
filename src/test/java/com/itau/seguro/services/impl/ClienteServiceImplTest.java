@@ -407,6 +407,47 @@ public class ClienteServiceImplTest {
         context.assertIsSatisfied();
     }
 
+    @Test
+    public void testConsultarClienteNãoCadastrado() {
+
+        final ClienteServiceImpl service = new ClienteServiceImpl();
+        final ClienteRepository repository = context.mock(ClienteRepository.class);
+        final ClienteAcionamentoProdutoRepository clienteAcionamentoProdutoRepository =
+                context.mock(ClienteAcionamentoProdutoRepository.class);
+
+        // parametros de entrada
+        final ClienteDto clienteDto = new ClienteDto();
+        clienteDto.setDocumento("28570368097");
+
+        //retorno mok
+        final  Optional< Cliente > cliente = Optional.ofNullable(null);
+
+        context.checking(new Expectations() {
+            {
+                oneOf(repository).findByDocumento(with(clienteDto.getDocumento()));
+                will(returnValue(cliente));
+
+                never(clienteAcionamentoProdutoRepository)
+                        .findByClienteAndProdutoOrderByDataAcionamentoDesc(with(any(Cliente.class)), with(any(Produto.class)));
+                will(returnValue(null));
+
+            }
+        });
+
+        service.setClienteRepository(repository);
+        service.setClienteAcionamentoProdutoRepository(clienteAcionamentoProdutoRepository);
+
+        try {
+            service.consultarClienteProdutosAcionamentos(clienteDto);
+        } catch (EntityNotFoundException b) {
+            context.assertIsSatisfied();
+            assertEquals("Cliente não cadastrado.", b.getMessage());
+            return;
+        }
+        fail("Nao lancou exception");
+
+    }
+
 
 
 
