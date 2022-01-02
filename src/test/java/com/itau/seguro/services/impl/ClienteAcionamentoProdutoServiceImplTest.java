@@ -4,6 +4,7 @@ import com.itau.seguro.dtos.ClienteAcionamentoProdutoDto;
 import com.itau.seguro.dtos.ClienteDto;
 import com.itau.seguro.dtos.ProdutoDto;
 import com.itau.seguro.exceptions.BusinessException;
+import com.itau.seguro.exceptions.EntityNotFoundException;
 import com.itau.seguro.models.Cliente;
 import com.itau.seguro.models.ClienteAcionamentoProduto;
 import com.itau.seguro.models.Produto;
@@ -32,7 +33,7 @@ public class ClienteAcionamentoProdutoServiceImplTest {
     };
 
     @Test
-    public void saveClienteAcionamentoProduto(){
+    public void testIncluirClienteAcionamentoProduto(){
 
         final ClienteAcionamentoProdutoServiceImpl service = new ClienteAcionamentoProdutoServiceImpl();
         final ClienteAcionamentoProdutoRepository repository= context.mock(ClienteAcionamentoProdutoRepository.class);
@@ -98,7 +99,7 @@ public class ClienteAcionamentoProdutoServiceImplTest {
         service.setClienteAcionamentoProdutoRepository(repository);
         service.setProdutoRepository(repositoryProduto);
         service.setClienteRepository(repositoryCliente);
-        service.saveClienteAcionamentoProduto(clienteAcionamentoProdutoDto);
+        service.incluirClienteAcionamentoProduto(clienteAcionamentoProdutoDto);
         context.assertIsSatisfied();
 
     }
@@ -156,7 +157,7 @@ public class ClienteAcionamentoProdutoServiceImplTest {
     }
 
     @Test
-    public void testVerificarPeriodoAcionamentoProdutoCliente(){
+    public void testVerificarPeriodoAcionamentoProduto(){
 
         final ClienteAcionamentoProdutoServiceImpl service = new ClienteAcionamentoProdutoServiceImpl();
         final ClienteAcionamentoProdutoRepository repository= context.mock(ClienteAcionamentoProdutoRepository.class);
@@ -202,7 +203,7 @@ public class ClienteAcionamentoProdutoServiceImplTest {
         service.setProdutoRepository(repositoryProduto);
 
         try {
-            service.verificarPeriodoAcionamentoProdutoCliente(clienteAcionamentoProdutoDto,cliente.get(),produto.get());
+            service.verificarPeriodoAcionamentoProduto(clienteAcionamentoProdutoDto,cliente.get(),produto.get());
         } catch (BusinessException b) {
             context.assertIsSatisfied();
             assertEquals("O período entre os acionamentos do mesmo produtos, é de no mínimo " +
@@ -212,56 +213,89 @@ public class ClienteAcionamentoProdutoServiceImplTest {
         fail("Nao lancou exception");
     }
 
-//    @Test
-//    public void testProdutoNaoCadastrado(){
-//        final ClienteAcionamentoProdutoServiceImpl service = new ClienteAcionamentoProdutoServiceImpl();
-//        final ClienteAcionamentoProdutoRepository repository= context.mock(ClienteAcionamentoProdutoRepository.class);
-//        final ProdutoRepository repositoryProduto = context.mock(ProdutoRepository.class);
-//        // parametros de entrada
-//        final ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto = new ClienteAcionamentoProdutoDto();
-//        final ClienteDto clienteDto = new ClienteDto();
-//        final ProdutoDto produtoDto = new ProdutoDto();
-//        clienteDto.setClienteId(new Integer(1));
-//        produtoDto.setProdutoId(new Integer(1));
-//        clienteAcionamentoProdutoDto.setCliente(clienteDto);
-//        clienteAcionamentoProdutoDto.setProduto(produtoDto);
-//        clienteAcionamentoProdutoDto.setDataAcionamento(DateUtils.converterStringParaDateTime("2022-01-04").toDate());
-//
-//        final Cliente cliente = new Cliente();
-//        cliente.setClienteId(clienteAcionamentoProdutoDto.getCliente().getClienteId());
-//        final Produto produto = new Produto();
-//        produto.setProdutoId(clienteAcionamentoProdutoDto.getProduto().getProdutoId());
-//
-//        //Retorno mock
-//        final  Optional< Produto> produtoOptional = Optional.ofNullable(new Produto());
-//        produtoOptional.get().setProdutoId(new Integer(1));
-//        produtoOptional.get().setQuantidadeAcionamento(new Integer(2));
-//
-//        context.checking(new Expectations() {
-//            {
-//                oneOf(repository).countByClienteAndProduto(with(cliente),with(produto));
-//                will(returnValue(new Integer(2)));
-//
-//                oneOf(repositoryProduto).findById(with(clienteAcionamentoProdutoDto.getProduto().getProdutoId()));
-//                will(returnValue(produtoOptional));
-//
-//                never(repository).findByClienteAndProdutoOrderByDataAcionamentoDesc(with(any(Cliente.class)),with(any(Produto.class)));
-//                will(returnValue(null));
-//
-//            }
-//        });
-//        service.setClienteAcionamentoProdutoRepository(repository);
-//        service.setProdutoRepository(repositoryProduto);
-//
-//        try {
-//            service.verificarProdutoLimiteAcionamento(clienteAcionamentoProdutoDto,cliente,produto);
-//        } catch (BusinessException b) {
-//            context.assertIsSatisfied();
-//            assertEquals("Não é possivel acionar o seguro,o número de acionamento está no limite.", b.getMessage());
-//            return;
-//        }
-//        fail("Nao lancou exception");
-//    }
-//
+    @Test
+    public void testClienteNaoCadastrado(){
+
+        final ClienteAcionamentoProdutoServiceImpl service = new ClienteAcionamentoProdutoServiceImpl();
+        final ClienteRepository repositoryCliente = context.mock(ClienteRepository.class);
+
+        // parametros de entrada
+        final ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto = new ClienteAcionamentoProdutoDto();
+
+        final ClienteDto clienteDto = new ClienteDto();
+        clienteDto.setDocumento("28570368097");
+
+        final ProdutoDto produtoDto = new ProdutoDto();
+        produtoDto.setProdutoId(new Integer(1));
+
+        clienteAcionamentoProdutoDto.setCliente(clienteDto);
+        clienteAcionamentoProdutoDto.setProduto(produtoDto);
+        clienteAcionamentoProdutoDto.setDataAcionamento(DateUtils.converterStringParaDateTime(("2022-01-04")).toDate());
+
+        //retorno mock
+        final Optional<Cliente> cliente = Optional.ofNullable(null);
+
+        context.checking(new Expectations() {
+            {
+
+                oneOf(repositoryCliente).findByDocumento(with(clienteAcionamentoProdutoDto.getCliente().getDocumento()));
+                will(returnValue(cliente));
+
+            }
+        });
+        service.setClienteRepository(repositoryCliente);
+
+        try {
+            service.verificarClienteCadastrado(clienteAcionamentoProdutoDto);
+        } catch (EntityNotFoundException b) {
+            context.assertIsSatisfied();
+            assertEquals("Cliente não cadastrado.", b.getMessage());
+            return;
+        }
+        fail("Nao lancou exception");
+    }
+
+    @Test
+    public void testProdutoNaoCadastrado(){
+
+        final ClienteAcionamentoProdutoServiceImpl service = new ClienteAcionamentoProdutoServiceImpl();
+        final ProdutoRepository repositoryProduto = context.mock(ProdutoRepository.class);
+
+        // parametros de entrada
+        final ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto = new ClienteAcionamentoProdutoDto();
+
+        final ClienteDto clienteDto = new ClienteDto();
+        clienteDto.setDocumento("28570368097");
+
+        final ProdutoDto produtoDto = new ProdutoDto();
+        produtoDto.setProdutoId(new Integer(1));
+
+        clienteAcionamentoProdutoDto.setCliente(clienteDto);
+        clienteAcionamentoProdutoDto.setProduto(produtoDto);
+        clienteAcionamentoProdutoDto.setDataAcionamento(DateUtils.converterStringParaDateTime(("2022-01-04")).toDate());
+
+        //retorno mock
+        final Optional<Produto> produto = Optional.ofNullable(null);
+
+        context.checking(new Expectations() {
+            {
+
+                oneOf(repositoryProduto).findById(with(clienteAcionamentoProdutoDto.getProduto().getProdutoId()));
+                will(returnValue(produto));
+
+            }
+        });
+        service.setProdutoRepository(repositoryProduto);
+
+        try {
+            service.verificarProdutoCadastrado(clienteAcionamentoProdutoDto);
+        } catch (EntityNotFoundException b) {
+            context.assertIsSatisfied();
+            assertEquals("Produto não cadastrado.", b.getMessage());
+            return;
+        }
+        fail("Nao lancou exception");
+    }
+
 
 }

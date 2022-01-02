@@ -42,7 +42,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Transactional
     @Override
-    public void saveClienteProduto(ClienteDto clienteDto) {
+    public void incluirClienteProduto(ClienteDto clienteDto) {
 
         Cliente cliente = new Cliente();
 
@@ -70,7 +70,7 @@ public class ClienteServiceImpl implements ClienteService {
 
 
     @Override
-    public ClienteDto findClienteProdutosAcionamentos(ClienteDto clienteDto) {
+    public ClienteDto consultarClienteProdutosAcionamentos(ClienteDto clienteDto) {
 
         Optional< Cliente > cliente = findByDocumento(clienteDto);
 

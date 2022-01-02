@@ -21,8 +21,10 @@ public class ClienteController {
     ClienteService clienteService;
 
     @PostMapping("/clientes_seguros")
-    public ResponseEntity<ClienteDto> saveClienteProduto(@RequestBody @Validated ClienteDto clienteDto){
-        clienteService.saveClienteProduto(clienteDto);
+    public ResponseEntity<ClienteDto> incluirClienteProduto(@RequestBody @Validated ClienteDto clienteDto){
+
+        clienteService.incluirClienteProduto(clienteDto);
+
         return new ResponseEntity<ClienteDto>(HttpStatus.CREATED);
     }
 

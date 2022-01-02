@@ -4,9 +4,9 @@ import com.itau.seguro.dtos.ClienteDto;
 
 public interface ClienteService {
 
-    void saveClienteProduto(ClienteDto clienteDto);
+    void incluirClienteProduto(ClienteDto clienteDto);
 
-    ClienteDto findClienteProdutosAcionamentos(ClienteDto clienteDto);
+    ClienteDto consultarClienteProdutosAcionamentos(ClienteDto clienteDto);
 
 
 

@@ -35,7 +35,7 @@ public class ClienteServiceImplTest {
     };
 
     @Test
-    public void testSaveClienteProdutos(){
+    public void testIncluirClienteProdutos(){
 
         final ClienteServiceImpl service = new ClienteServiceImpl();
         final ClienteRepository repository= context.mock(ClienteRepository.class);
@@ -124,12 +124,12 @@ public class ClienteServiceImplTest {
         });
         service.setClienteRepository(repository);
         service.setProdutoRepository(repositoryProduto);
-        service.saveClienteProduto(clienteDto);
+        service.incluirClienteProduto(clienteDto);
         context.assertIsSatisfied();
     }
 
     @Test
-    public void testSaveClienteProdutoExiste(){
+    public void testIncluirClienteProdutoExiste(){
 
         final ClienteServiceImpl service = new ClienteServiceImpl();
         final ClienteRepository repository= context.mock(ClienteRepository.class);
@@ -215,7 +215,7 @@ public class ClienteServiceImplTest {
         service.setProdutoRepository(repositoryProduto);
 
         try {
-            service.saveClienteProduto(clienteDto);
+            service.incluirClienteProduto(clienteDto);
         } catch (BusinessException b) {
             context.assertIsSatisfied();
             assertEquals("Cliente ja cadastrado com o produtoID: " + clienteDto.getProdutos().get(0).getProdutoId(), b.getMessage());
@@ -226,7 +226,7 @@ public class ClienteServiceImplTest {
     }
 
     @Test
-    public void testSaveClienteProdutoNaoCadastrado(){
+    public void testIncluirClienteProdutoNaoCadastrado(){
 
         final ClienteServiceImpl service = new ClienteServiceImpl();
         final ClienteRepository repository= context.mock(ClienteRepository.class);
@@ -293,7 +293,7 @@ public class ClienteServiceImplTest {
         service.setProdutoRepository(repositoryProduto);
 
         try {
-            service.saveClienteProduto(clienteDto);
+            service.incluirClienteProduto(clienteDto);
         } catch (EntityNotFoundException b) {
             context.assertIsSatisfied();
             assertEquals("Produto Seguro Vida não está cadastrado.", b.getMessage());
@@ -304,7 +304,7 @@ public class ClienteServiceImplTest {
     }
 
     @Test
-    public void testFindClienteProdutosAcionamentos() {
+    public void testConsultarClienteProdutosAcionamentos() {
 
         final ClienteServiceImpl service = new ClienteServiceImpl();
         final ClienteRepository repository = context.mock(ClienteRepository.class);
@@ -383,7 +383,7 @@ public class ClienteServiceImplTest {
         service.setProdutoRepository(repositoryProduto);
         service.setClienteAcionamentoProdutoRepository(clienteAcionamentoProdutoRepository);
 
-        ClienteDto clienteDtoProdutoDtoRetorno = service.findClienteProdutosAcionamentos(clienteDto);
+        ClienteDto clienteDtoProdutoDtoRetorno = service.consultarClienteProdutosAcionamentos(clienteDto);
 
         Assert.assertEquals("Pedro Alves",clienteDtoProdutoDtoRetorno.getNome());
         Assert.assertEquals("28570368097",clienteDtoProdutoDtoRetorno.getDocumento());

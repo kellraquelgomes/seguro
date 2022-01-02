@@ -39,21 +39,13 @@ public class ClienteAcionamentoProdutoServiceImpl implements ClienteAcionamentoP
 
     @Override
     @Transactional
-    public void saveClienteAcionamentoProduto(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto) {
+    public void incluirClienteAcionamentoProduto(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto) {
 
         ClienteAcionamentoProduto clienteAcionamentoProduto = new ClienteAcionamentoProduto();
 
-        Optional<Cliente> cliente = clienteRepository.findByDocumento(clienteAcionamentoProdutoDto.getCliente().getDocumento());
+        Optional< Cliente > cliente = verificarClienteCadastrado(clienteAcionamentoProdutoDto);
 
-        if(!cliente.isPresent()){
-            throw new EntityNotFoundException("Cliente não cadastrado.");
-        }
-
-        Optional<Produto> produto= produtoRepository.findById(clienteAcionamentoProdutoDto.getProduto().getProdutoId());
-
-        if(!produto.isPresent()){
-            throw new EntityNotFoundException("Produto não cadastrado.");
-        }
+        Optional< Produto > produto = verificarProdutoCadastrado(clienteAcionamentoProdutoDto);
 
         cliente.get().setClienteId(cliente.get().getClienteId());
         produto.get().setProdutoId(produto.get().getProdutoId());
@@ -67,8 +59,27 @@ public class ClienteAcionamentoProdutoServiceImpl implements ClienteAcionamentoP
         clienteAcionamentoProdutoRepository.save(clienteAcionamentoProduto);
     }
 
-    protected void verificarProdutoLimiteAcionamento(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto, Cliente cliente, Produto produto) {
+    protected Optional< Produto > verificarProdutoCadastrado(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto) {
 
+        Optional<Produto> produto= produtoRepository.findById(clienteAcionamentoProdutoDto.getProduto().getProdutoId());
+
+        if(!produto.isPresent()){
+            throw new EntityNotFoundException("Produto não cadastrado.");
+        }
+        return produto;
+    }
+
+    protected Optional< Cliente > verificarClienteCadastrado(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto) {
+
+        Optional<Cliente> cliente = clienteRepository.findByDocumento(clienteAcionamentoProdutoDto.getCliente().getDocumento());
+
+        if(!cliente.isPresent()){
+            throw new EntityNotFoundException("Cliente não cadastrado.");
+        }
+        return cliente;
+    }
+
+    protected void verificarProdutoLimiteAcionamento(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto, Cliente cliente, Produto produto) {
 
         Integer acionamentoProdutoCliente = clienteAcionamentoProdutoRepository.countByClienteAndProduto(
                 cliente, produto);
@@ -79,12 +90,13 @@ public class ClienteAcionamentoProdutoServiceImpl implements ClienteAcionamentoP
 
             throw new BusinessException("Não é possivel acionar o seguro,o número de acionamento está no limite.");
         }
-        verificarPeriodoAcionamentoProdutoCliente(clienteAcionamentoProdutoDto, cliente, produto);
+        verificarPeriodoAcionamentoProduto(clienteAcionamentoProdutoDto, cliente, produto);
     }
 
-    protected void verificarPeriodoAcionamentoProdutoCliente(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto, Cliente cliente, Produto produto) {
+    protected void verificarPeriodoAcionamentoProduto(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto, Cliente cliente, Produto produto) {
 
-        List< ClienteAcionamentoProduto > clienteAcionamentoProdutos = clienteAcionamentoProdutoRepository.findByClienteAndProdutoOrderByDataAcionamentoDesc(cliente,produto);
+        List< ClienteAcionamentoProduto > clienteAcionamentoProdutos = clienteAcionamentoProdutoRepository.
+                findByClienteAndProdutoOrderByDataAcionamentoDesc(cliente,produto);
 
         if(!clienteAcionamentoProdutos.isEmpty()){
             int days = Days.daysBetween( DateUtils.converterDategParaDateTime(clienteAcionamentoProdutos.get(0).getDataAcionamento()),

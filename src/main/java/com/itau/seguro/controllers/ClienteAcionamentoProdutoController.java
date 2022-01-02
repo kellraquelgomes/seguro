@@ -17,12 +17,14 @@ public class ClienteAcionamentoProdutoController {
     ClienteAcionamentoProdutoService clienteAcionamentoProdutoService;
 
     @PostMapping("/clientes_seguros/{documento}/acionamentos")
-    public ResponseEntity< ClienteAcionamentoProdutoDto > saveClienteAcionamentoProduto(@PathVariable(value = "documento") String documento,
-            @RequestBody @Validated ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto){
+    public ResponseEntity< ClienteAcionamentoProdutoDto > incluirClienteAcionamentoProduto(@PathVariable(value = "documento") String documento,
+                                                                                           @RequestBody @Validated ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto){
         ClienteDto clienteDto = new ClienteDto();
         clienteDto.setDocumento(documento);
         clienteAcionamentoProdutoDto.setCliente(clienteDto);
-        clienteAcionamentoProdutoService.saveClienteAcionamentoProduto(clienteAcionamentoProdutoDto);
+
+        clienteAcionamentoProdutoService.incluirClienteAcionamentoProduto(clienteAcionamentoProdutoDto);
+
         return new ResponseEntity<ClienteAcionamentoProdutoDto>(HttpStatus.CREATED);
     }
 }
