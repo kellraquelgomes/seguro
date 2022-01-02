@@ -50,6 +50,8 @@ public class ClienteAcionamentoProdutoServiceImpl implements ClienteAcionamentoP
         cliente.get().setClienteId(cliente.get().getClienteId());
         produto.get().setProdutoId(produto.get().getProdutoId());
 
+        verificarClienteSeguroContratado(cliente.get(), produto.get());
+
         verificarProdutoLimiteAcionamento(clienteAcionamentoProdutoDto,cliente.get(),produto.get());
 
         clienteAcionamentoProduto.setCliente(cliente.get());
@@ -57,6 +59,17 @@ public class ClienteAcionamentoProdutoServiceImpl implements ClienteAcionamentoP
         clienteAcionamentoProduto.setDataAcionamento(clienteAcionamentoProdutoDto.getDataAcionamento());
 
         clienteAcionamentoProdutoRepository.save(clienteAcionamentoProduto);
+    }
+
+    protected void verificarClienteSeguroContratado(Cliente cliente, Produto produto) {
+
+        Optional<Cliente> clienteAndProduto = clienteRepository.findByClienteIdAndProdutoId(
+                cliente.getClienteId(), produto.getProdutoId());
+
+        if(!clienteAndProduto.isPresent()){
+            throw new BusinessException("O cliente não contratou este seguro.");
+        }
+
     }
 
     protected Optional< Produto > verificarProdutoCadastrado(ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto) {

@@ -84,9 +84,11 @@ public class ClienteAcionamentoProdutoServiceImplTest {
                 oneOf(repositoryProduto).findById(with(clienteAcionamentoProdutoDto.getProduto().getProdutoId()));
                 will(returnValue(produto));
 
+                oneOf(repositoryCliente).findByClienteIdAndProdutoId(with(cliente.get().getClienteId()), with(produto.get().getProdutoId()));
+                will(returnValue(cliente));
+
                 oneOf(repository).countByClienteAndProduto(with(cliente.get()),with(produto.get()));
                 will(returnValue(new Integer(1)));
-
 
                 oneOf(repository).findByClienteAndProdutoOrderByDataAcionamentoDesc(with(cliente.get()), with(produto.get()));
                 will(returnValue(clienteAcionamentoProdutos));
@@ -296,6 +298,58 @@ public class ClienteAcionamentoProdutoServiceImplTest {
         }
         fail("Nao lancou exception");
     }
+
+    @Test
+    public void testVerificarClienteSeguroContratado(){
+
+        final ClienteAcionamentoProdutoServiceImpl service = new ClienteAcionamentoProdutoServiceImpl();
+        final ProdutoRepository repositoryProduto = context.mock(ProdutoRepository.class);
+        final ClienteRepository repositoryCliente = context.mock(ClienteRepository.class);
+
+
+        // parametros de entrada
+        final ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto = new ClienteAcionamentoProdutoDto();
+
+        final ClienteDto clienteDto = new ClienteDto();
+        clienteDto.setDocumento("28570368097");
+
+        final ProdutoDto produtoDto = new ProdutoDto();
+        produtoDto.setProdutoId(new Integer(1));
+
+        clienteAcionamentoProdutoDto.setCliente(clienteDto);
+        clienteAcionamentoProdutoDto.setProduto(produtoDto);
+        clienteAcionamentoProdutoDto.setDataAcionamento(DateUtils.converterStringParaDateTime(("2022-01-04")).toDate());
+
+        final Optional<Cliente> cliente =  Optional.ofNullable(new Cliente());
+        cliente.get().setClienteId(new Integer(1));
+        cliente.get().setDocumento(clienteDto.getDocumento());
+
+        final  Optional< Produto> produto = Optional.ofNullable(new Produto());
+        produto.get().setProdutoId(new Integer(1));
+        produto.get().setQuantidadeAcionamento(new Integer(2));
+
+        //retorno mock
+        final Optional<Cliente> clienteAndProduto = Optional.ofNullable(null);
+
+        context.checking(new Expectations() {
+            {
+
+                oneOf(repositoryCliente).findByClienteIdAndProdutoId(with(cliente.get().getClienteId()), with(produto.get().getProdutoId()));
+                will(returnValue(clienteAndProduto));
+            }
+        });
+        service.setClienteRepository(repositoryCliente);
+
+        try {
+            service.verificarClienteSeguroContratado(cliente.get(),produto.get());
+        } catch (BusinessException b) {
+            context.assertIsSatisfied();
+            assertEquals("O cliente não contratou este seguro.", b.getMessage());
+            return;
+        }
+        fail("Nao lancou exception");
+    }
+
 
 
 }
