@@ -1,17 +1,19 @@
 package com.itau.seguro.dtos;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.joda.time.DateTime;
+
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Data
 public class ClienteAcionamentoProdutoDto {
 
+    @NotNull
     private ProdutoDto produto;
 
     private ClienteDto cliente;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
-    private DateTime dataAcionamento;
+    @NotNull
+    private Date dataAcionamento;
 
 }

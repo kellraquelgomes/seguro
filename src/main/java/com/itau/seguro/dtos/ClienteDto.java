@@ -20,7 +20,8 @@ public class ClienteDto {
     @NotNull
     private String documento;
 
-    //@NotEmpty
+    @NotEmpty
+    @NotNull
     private List< ProdutoDto > produtos;
 
 }

@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -24,7 +25,7 @@ public class ClienteAcionamentoProduto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     @Column(nullable = false)
-    private DateTime dataAcionamento;
+    private Date dataAcionamento;
 
     //MuitosAcionamentosParaUmProduto
     @JsonProperty(access = JsonProperty.Access. WRITE_ONLY)

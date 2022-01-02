@@ -3,6 +3,7 @@ package com.itau.seguro.dtos;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,6 +27,9 @@ public class ProdutoDto {
     @NotNull
     private ParceiroDto parceiro;
 
+    @NotEmpty
+    @NotBlank
+    @NotNull
     private List<ClienteAcionamentoProdutoDto> acionamentos;
 
 

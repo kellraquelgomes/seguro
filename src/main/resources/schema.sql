@@ -11,7 +11,7 @@
 
     create table PUBLIC.tb_cliente_acionamento_produto (
         id integer not null,
-        data_acionamento varbinary(255) not null,
+        data_acionamento timestamp not null,
         cliente_cliente_id integer not null,
         produto_produto_id integer not null,
         primary key (id)

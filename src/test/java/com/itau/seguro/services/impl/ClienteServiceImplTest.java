@@ -13,11 +13,10 @@ import com.itau.seguro.models.Produto;
 import com.itau.seguro.repositories.ClienteAcionamentoProdutoRepository;
 import com.itau.seguro.repositories.ClienteRepository;
 import com.itau.seguro.repositories.ProdutoRepository;
+import com.itau.seguro.utils.DateUtils;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -112,10 +111,13 @@ public class ClienteServiceImplTest {
             {
                 oneOf(repository).findByDocumento(with(clienteDto.getDocumento()));
                 will(returnValue(clienteNãoExiste));
+
                 oneOf(repository).save(with(cliente));
                 will(returnValue(cliente));
+
                 oneOf(repositoryProduto).findById(with(clienteDto.getProdutos().get(0).getProdutoId()));
                 will(returnValue(produtoSeguroVida));
+
                 oneOf(repositoryProduto).findById(with(clienteDto.getProdutos().get(1).getProdutoId()));
                 will(returnValue(produtoSeguroAlto));
             }
@@ -197,11 +199,14 @@ public class ClienteServiceImplTest {
             {
                 oneOf(repository).findByDocumento(with(clienteDto.getDocumento()));
                 will(returnValue(clienteExiste));
+
                 oneOf(repositoryProduto).findByClientesAndProdutoId(with(clienteExiste.get()),
                         with(clienteDto.getProdutos().get(0).getProdutoId()));
                 will(returnValue(listaProduto));
+
                 never(repository).save(with(any(com.itau.seguro.models.Cliente.class)));
                 will(returnValue(null));
+
                 never(repositoryProduto).findById(with(any(Integer.class)));
                 will(returnValue(null));
             }
@@ -275,8 +280,10 @@ public class ClienteServiceImplTest {
             {
                 oneOf(repository).findByDocumento(with(clienteDto.getDocumento()));
                 will(returnValue(clienteNãoExiste));
+
                 oneOf(repository).save(with(cliente));
                 will(returnValue(cliente));
+
                 oneOf(repositoryProduto).findById(with(clienteDto.getProdutos().get(0).getProdutoId()));
                 will(returnValue(produtoSeguroVida));
 
@@ -341,13 +348,13 @@ public class ClienteServiceImplTest {
         cliente.get().setProdutos(produtos);
 
         final ClienteAcionamentoProduto clienteAcionamentoProdutoSeguroVida = new ClienteAcionamentoProduto();
-        clienteAcionamentoProdutoSeguroVida.setDataAcionamento(converterStringParaDateTime("2022-01-12"));
+        clienteAcionamentoProdutoSeguroVida.setDataAcionamento(DateUtils.converterStringParaDateTime("2022-01-12").toDate());
 
         final ClienteAcionamentoProduto clienteAcionamentoProdutoSeguroVida_SegundoAcionamento = new ClienteAcionamentoProduto();
-        clienteAcionamentoProdutoSeguroVida_SegundoAcionamento.setDataAcionamento(converterStringParaDateTime("2022-03-12"));
+        clienteAcionamentoProdutoSeguroVida_SegundoAcionamento.setDataAcionamento(DateUtils.converterStringParaDateTime("2022-03-12").toDate());
 
         final ClienteAcionamentoProduto clienteAcionamentoProdutoSeguroAlto = new ClienteAcionamentoProduto();
-        clienteAcionamentoProdutoSeguroAlto.setDataAcionamento(converterStringParaDateTime("2022-03-12"));
+        clienteAcionamentoProdutoSeguroAlto.setDataAcionamento(DateUtils.converterStringParaDateTime("2022-03-12").toDate());
 
         final HashSet< ClienteAcionamentoProduto > clienteAcionamentoProdutos = new HashSet<>();
         clienteAcionamentoProdutos.add(clienteAcionamentoProdutoSeguroVida);
@@ -360,7 +367,6 @@ public class ClienteServiceImplTest {
             {
                 oneOf(repository).findByDocumento(with(clienteDto.getDocumento()));
                 will(returnValue(cliente));
-
 
                 oneOf(clienteAcionamentoProdutoRepository)
                         .findByClienteAndProdutoOrderByDataAcionamentoDesc(with(cliente.get()), with(produtoSeguroVida));
@@ -386,24 +392,22 @@ public class ClienteServiceImplTest {
         Assert.assertEquals("Seguro Auto",clienteDtoProdutoDtoRetorno.getProdutos().get(0).getNome());
         Assert.assertEquals(new BigDecimal(300.00),clienteDtoProdutoDtoRetorno.getProdutos().get(0).getValor());
         Assert.assertEquals(new Integer(3),clienteDtoProdutoDtoRetorno.getProdutos().get(0).getQuantidadeAcionamento());
-        Assert.assertEquals(converterStringParaDateTime("2022-03-12"),clienteDtoProdutoDtoRetorno.getProdutos().get(0).getAcionamentos().get(0).getDataAcionamento());
+        Assert.assertEquals(
+                DateUtils.converterStringParaDateTime("2022-03-12").toDate(),
+                clienteDtoProdutoDtoRetorno.getProdutos().get(0).getAcionamentos().get(0).getDataAcionamento());
 
         Assert.assertEquals("Com você",clienteDtoProdutoDtoRetorno.getProdutos().get(1).getParceiro().getNome());
         Assert.assertEquals("Seguro Vida",clienteDtoProdutoDtoRetorno.getProdutos().get(1).getNome());
         Assert.assertEquals(new BigDecimal(200.00),clienteDtoProdutoDtoRetorno.getProdutos().get(1).getValor());
         Assert.assertEquals(new Integer(1),clienteDtoProdutoDtoRetorno.getProdutos().get(1).getQuantidadeAcionamento());
-        Assert.assertEquals(converterStringParaDateTime("2022-01-12"),clienteDtoProdutoDtoRetorno.getProdutos().get(1).getAcionamentos().get(0).getDataAcionamento());
-        Assert.assertEquals(converterStringParaDateTime("2022-03-12"),clienteDtoProdutoDtoRetorno.getProdutos().get(1).getAcionamentos().get(1).getDataAcionamento());
+        Assert.assertEquals(DateUtils.converterStringParaDateTime("2022-01-12").toDate(),clienteDtoProdutoDtoRetorno.getProdutos().get(1).getAcionamentos().get(0).getDataAcionamento());
+        Assert.assertEquals(DateUtils.converterStringParaDateTime("2022-03-12").toDate(),clienteDtoProdutoDtoRetorno.getProdutos().get(1).getAcionamentos().get(1).getDataAcionamento());
 
         assertNotNull(clienteDtoProdutoDtoRetorno);
         context.assertIsSatisfied();
     }
 
-    private DateTime converterStringParaDateTime(String data){
 
-        return DateTime.parse(data, DateTimeFormat.forPattern("yyyy-MM-dd"));
-
-    }
 
 
 }
