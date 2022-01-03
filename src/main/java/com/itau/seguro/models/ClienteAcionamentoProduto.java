@@ -1,18 +1,13 @@
 package com.itau.seguro.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "TB_CLIENTE_ACIONAMENTO_PRODUTO")
 @EqualsAndHashCode(of = {"id"})
@@ -24,18 +19,12 @@ public class ClienteAcionamentoProduto  implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ssZ")
     @Column(nullable = false)
     private Date dataAcionamento;
 
-    //MuitosAcionamentosParaUmProduto
-    @JsonProperty(access = JsonProperty.Access. WRITE_ONLY)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Produto produto;
 
-    //MuitosAcionamentosParaUmCliente
-    @JsonProperty(access = JsonProperty.Access. WRITE_ONLY)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Cliente cliente;
 

@@ -13,6 +13,7 @@ import com.itau.seguro.services.ClienteAcionamentoProdutoService;
 import com.itau.seguro.utils.DateUtils;
 import lombok.AccessLevel;
 import lombok.Setter;
+import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -112,8 +113,8 @@ public class ClienteAcionamentoProdutoServiceImpl implements ClienteAcionamentoP
                 findByClienteAndProdutoOrderByDataAcionamentoDesc(cliente,produto);
 
         if(!clienteAcionamentoProdutos.isEmpty()){
-            int days = Days.daysBetween( DateUtils.converterDateParaDateTime(clienteAcionamentoProdutos.get(0).getDataAcionamento()),
-                    DateUtils.converterDateParaDateTime(clienteAcionamentoProdutoDto.getDataAcionamento())).getDays();
+            int days = Days.daysBetween(new DateTime(clienteAcionamentoProdutos.get(0).getDataAcionamento()),
+                    new DateTime(clienteAcionamentoProdutoDto.getDataAcionamento())).getDays();
             if(days <= 30){
                 throw new BusinessException("O período entre os acionamentos do mesmo produtos, é de no mínimo " +
                         "30 dias, a partir da data do último acionamento.");

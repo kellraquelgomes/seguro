@@ -1,5 +1,6 @@
 package com.itau.seguro.dtos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProdutoDto {
 
     private Integer produtoId;
@@ -28,7 +30,6 @@ public class ProdutoDto {
     private ParceiroDto parceiro;
 
     @NotEmpty
-    @NotBlank
     @NotNull
     private List<ClienteAcionamentoProdutoDto> acionamentos;
 

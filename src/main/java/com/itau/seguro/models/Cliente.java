@@ -29,16 +29,12 @@ public class Cliente implements Serializable {
     @Column(nullable = false, length = 20)
     private String documento;
 
-    //MuitosClientesParaMuitosProdutos
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(    name = "TB_CLIENTES_PRODUTOS",
             joinColumns = @JoinColumn(name = "clienteId"),
             inverseJoinColumns = @JoinColumn(name = "produtoId"))
     private Set<Produto> produtos = new HashSet<>();
 
-    //UmClienteParaMuitosAcionamentos
-    @JsonProperty(access = JsonProperty.Access. WRITE_ONLY)
     @OneToMany(mappedBy = "cliente" , fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     private Set<ClienteAcionamentoProduto> acionamentos = new HashSet<>();

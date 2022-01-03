@@ -1,6 +1,5 @@
 package com.itau.seguro.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Fetch;
@@ -32,18 +31,12 @@ public class Produto implements Serializable {
     @Column(nullable = false, length = 20)
     private Integer quantidadeAcionamento;
 
-    //MuitosProdutosParaMuitosClientes
     @ManyToMany(mappedBy = "produtos",fetch = FetchType.LAZY)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<Cliente> clientes = new HashSet<>();
 
-    //MuitosProdutosParaOneParceiro
-    @JsonProperty(access = JsonProperty.Access. WRITE_ONLY)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Parceiro parceiro;
 
-    //UmProdutoParaMuitosAcionamentos
-    @JsonProperty(access = JsonProperty.Access. WRITE_ONLY)
     @OneToMany(mappedBy = "produto" , fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     private Set<ClienteAcionamentoProduto> acionamentos = new HashSet<>();
