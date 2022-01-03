@@ -112,8 +112,8 @@ public class ClienteAcionamentoProdutoServiceImpl implements ClienteAcionamentoP
                 findByClienteAndProdutoOrderByDataAcionamentoDesc(cliente,produto);
 
         if(!clienteAcionamentoProdutos.isEmpty()){
-            int days = Days.daysBetween( DateUtils.converterDategParaDateTime(clienteAcionamentoProdutos.get(0).getDataAcionamento()),
-                    DateUtils.converterDategParaDateTime(clienteAcionamentoProdutoDto.getDataAcionamento())).getDays();
+            int days = Days.daysBetween( DateUtils.converterDateParaDateTime(clienteAcionamentoProdutos.get(0).getDataAcionamento()),
+                    DateUtils.converterDateParaDateTime(clienteAcionamentoProdutoDto.getDataAcionamento())).getDays();
             if(days <= 30){
                 throw new BusinessException("O período entre os acionamentos do mesmo produtos, é de no mínimo " +
                         "30 dias, a partir da data do último acionamento.");

@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
@@ -15,7 +16,7 @@ import java.util.Date;
 @Entity
 @Table(name = "TB_CLIENTE_ACIONAMENTO_PRODUTO")
 @EqualsAndHashCode(of = {"id"})
-public class ClienteAcionamentoProduto {
+public class ClienteAcionamentoProduto  implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -23,7 +24,8 @@ public class ClienteAcionamentoProduto {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ssZ")
     @Column(nullable = false)
     private Date dataAcionamento;
 
