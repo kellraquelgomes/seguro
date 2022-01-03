@@ -84,7 +84,7 @@ public class ClienteAcionamentoProdutoServiceImplTest {
                 oneOf(repositoryProduto).findById(with(clienteAcionamentoProdutoDto.getProduto().getProdutoId()));
                 will(returnValue(produto));
 
-                oneOf(repositoryCliente).findByClienteIdAndProdutoId(with(cliente.get().getClienteId()), with(produto.get().getProdutoId()));
+                oneOf(repositoryCliente).findByClienteIdAndProdutos(with(cliente.get().getClienteId()), with(produto.get()));
                 will(returnValue(cliente));
 
                 oneOf(repository).countByClienteAndProduto(with(cliente.get()),with(produto.get()));
@@ -334,7 +334,7 @@ public class ClienteAcionamentoProdutoServiceImplTest {
         context.checking(new Expectations() {
             {
 
-                oneOf(repositoryCliente).findByClienteIdAndProdutoId(with(cliente.get().getClienteId()), with(produto.get().getProdutoId()));
+                oneOf(repositoryCliente).findByClienteIdAndProdutos(with(cliente.get().getClienteId()), with(produto.get()));
                 will(returnValue(clienteAndProduto));
             }
         });

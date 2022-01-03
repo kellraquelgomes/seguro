@@ -64,8 +64,8 @@ public class ClienteAcionamentoProdutoServiceImpl implements ClienteAcionamentoP
 
     protected void verificarClienteSeguroContratado(Cliente cliente, Produto produto) {
 
-        Optional<Cliente> clienteAndProduto = clienteRepository.findByClienteIdAndProdutoId(
-                cliente.getClienteId(), produto.getProdutoId());
+        Optional<Cliente> clienteAndProduto = clienteRepository.findByClienteIdAndProdutos(
+                cliente.getClienteId(), produto);
 
         if(!clienteAndProduto.isPresent()){
             throw new BusinessException("O cliente não contratou este seguro.");
