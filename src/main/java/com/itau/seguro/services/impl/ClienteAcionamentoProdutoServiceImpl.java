@@ -10,7 +10,6 @@ import com.itau.seguro.repositories.ClienteAcionamentoProdutoRepository;
 import com.itau.seguro.repositories.ClienteRepository;
 import com.itau.seguro.repositories.ProdutoRepository;
 import com.itau.seguro.services.ClienteAcionamentoProdutoService;
-import com.itau.seguro.utils.DateUtils;
 import lombok.AccessLevel;
 import lombok.Setter;
 import org.joda.time.DateTime;
