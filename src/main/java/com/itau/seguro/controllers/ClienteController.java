@@ -20,7 +20,7 @@ public class ClienteController {
     ClienteService clienteService;
 
     @ApiOperation(value="Cadastrar os dados relacionados a um cliente e seus seguros contratados")
-    @PostMapping("/clientes_seguros")
+    @PostMapping("/v1/clientes_seguros")
     public ResponseEntity<ClienteDto> incluirClienteProduto(@RequestBody @Validated ClienteDto clienteDto){
 
         clienteService.incluirClienteProduto(clienteDto);
@@ -29,7 +29,7 @@ public class ClienteController {
     }
 
     @ApiOperation(value="Exibir dados de um cliente (seu portfolio de produtos contratados) e seus respectivos acionamentos")
-    @GetMapping("/clientes_seguros/{documento}/informacoes")
+    @GetMapping("/v1/clientes_seguros/{documento}/informacoes")
     public ResponseEntity<ClienteDto> consultarClienteProdutosAcionamentos(@PathVariable(value = "documento") String documento) {
 
         ClienteDto clienteDto = new ClienteDto();

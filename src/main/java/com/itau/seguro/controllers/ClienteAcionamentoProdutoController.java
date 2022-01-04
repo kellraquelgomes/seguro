@@ -21,7 +21,7 @@ public class ClienteAcionamentoProdutoController {
     ClienteAcionamentoProdutoService clienteAcionamentoProdutoService;
 
     @ApiOperation(value="Cadastrar o acionamento de um produto")
-    @PostMapping("/clientes_seguros/{documento}/acionamentos")
+    @PostMapping("/v1/clientes_seguros/{documento}/acionamentos")
     public ResponseEntity< ClienteAcionamentoProdutoDto > incluirClienteAcionamentoProduto(@PathVariable(value = "documento") String documento,
                                                                                            @RequestBody @Validated ClienteAcionamentoProdutoDto clienteAcionamentoProdutoDto){
         ClienteDto clienteDto = new ClienteDto();
