@@ -273,7 +273,7 @@ public class ClienteServiceImplTest {
 
         // retorno cliente sem produtos cadastrado
         final Optional<Produto> produtoSeguroVida =   Optional.ofNullable(null);
-        final Optional<Produto> produtoSeguroAlto = Optional.ofNullable(null);
+
 
 
         context.checking(new Expectations() {
@@ -296,7 +296,7 @@ public class ClienteServiceImplTest {
             service.incluirClienteProduto(clienteDto);
         } catch (EntityNotFoundException b) {
             context.assertIsSatisfied();
-            assertEquals("Produto Seguro Vida não está cadastrado.", b.getMessage());
+            assertEquals("Produto "  + produtoSeguroVidaDto.getProdutoId() +" não está cadastrado.", b.getMessage());
             return;
         }
         fail("Nao lancou exception");

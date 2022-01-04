@@ -23,7 +23,6 @@ public class Parceiro implements Serializable {
     private String nome;
 
     @OneToMany(mappedBy = "parceiro" , fetch = FetchType.LAZY)
-   // @Fetch(FetchMode.SUBSELECT)
     private Set<Produto> produtos = new HashSet<>();
 
 

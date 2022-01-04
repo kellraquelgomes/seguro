@@ -1,6 +1,5 @@
 package com.itau.seguro.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Fetch;
@@ -36,7 +35,6 @@ public class Cliente implements Serializable {
     private Set<Produto> produtos = new HashSet<>();
 
     @OneToMany(mappedBy = "cliente" , fetch = FetchType.LAZY)
-    @Fetch(FetchMode.SUBSELECT)
     private Set<ClienteAcionamentoProduto> acionamentos = new HashSet<>();
 
 

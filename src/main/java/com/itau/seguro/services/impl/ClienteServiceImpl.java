@@ -62,7 +62,7 @@ public class ClienteServiceImpl implements ClienteService {
             }
             else {
                 throw new EntityNotFoundException( "Produto "
-                        + produtoDto.getNome() + " não está cadastrado.");
+                        + produtoDto.getProdutoId() + " não está cadastrado.");
             }
 
         }

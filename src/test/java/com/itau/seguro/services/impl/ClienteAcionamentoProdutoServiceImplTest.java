@@ -303,7 +303,6 @@ public class ClienteAcionamentoProdutoServiceImplTest {
     public void testVerificarClienteSeguroContratado(){
 
         final ClienteAcionamentoProdutoServiceImpl service = new ClienteAcionamentoProdutoServiceImpl();
-        final ProdutoRepository repositoryProduto = context.mock(ProdutoRepository.class);
         final ClienteRepository repositoryCliente = context.mock(ClienteRepository.class);
 
 
