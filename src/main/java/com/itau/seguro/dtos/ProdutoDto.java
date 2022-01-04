@@ -13,16 +13,18 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProdutoDto {
 
-    private Integer produtoId;
-
     @NotBlank
     @NotNull
+    private Integer produtoId;
+
     private String nome;
 
     @NotBlank
     @NotNull
     private BigDecimal valor;
 
+    @NotBlank
+    @NotNull
     private Integer quantidadeAcionamento;
 
     @NotBlank

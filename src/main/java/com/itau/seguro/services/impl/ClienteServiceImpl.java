@@ -50,22 +50,21 @@ public class ClienteServiceImpl implements ClienteService {
 
         BeanUtils.copyProperties(clienteDto,cliente);
 
-        cliente = clienteRepository.save(cliente);
+        final Cliente clienteSaved = clienteRepository.save(cliente);
 
-        for (ProdutoDto produtoDto: clienteDto.getProdutos()) {
+        clienteDto.getProdutos().forEach(produtoDto -> {
 
             Optional<Produto> produto = produtoRepository.findById(produtoDto.getProdutoId());
 
-            if (produto.isPresent()){
-                cliente.getProdutos().add(produto.get());
+                if (produto.isPresent()){
+                    clienteSaved.getProdutos().add(produto.get());
 
-            }
-            else {
-                throw new EntityNotFoundException( "Produto "
-                        + produtoDto.getProdutoId() + " não está cadastrado.");
-            }
-
-        }
+                }
+                else {
+                    throw new EntityNotFoundException( "Produto "
+                            + produtoDto.getProdutoId() + " não está cadastrado.");
+                }
+            });
     }
 
 

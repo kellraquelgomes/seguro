@@ -191,7 +191,7 @@ public class ClienteAcionamentoProdutoServiceImplTest {
         ClienteAcionamentoProduto clienteAcionamentoProduto = new ClienteAcionamentoProduto();
         clienteAcionamentoProduto.setCliente(cliente.get());
         clienteAcionamentoProduto.setProduto(produto.get());
-        clienteAcionamentoProduto.setDataAcionamento(DateUtils.converterStringParaDateTime(("2021-12-05")).toDate());
+        clienteAcionamentoProduto.setDataAcionamento(DateUtils.converterStringParaDateTime(("2021-12-06")).toDate());
         clienteAcionamentoProdutos.add(clienteAcionamentoProduto);
 
         context.checking(new Expectations() {
