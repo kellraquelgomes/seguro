@@ -1,0 +1,6 @@
+version: '2'
+services:
+  seguros-backend:
+    image: ghcr.io/kellraquelgomes/seguro:latest
+    ports:
+      - "8080:8080"
