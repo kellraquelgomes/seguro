@@ -35,3 +35,7 @@
  ### Para acessar a API REST Seguro usando Swagger start o spring boot e clique no link abaixo: 
  
  * [Acesso da API](http://localhost:8080/swagger-ui.html)
+ 
+ ### Para subir a aplicação usando Docker compose acesse a raiz do projeto e  digite o comando abaixo: 
+
+ * docker-compose up -d
